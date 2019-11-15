@@ -4,26 +4,30 @@ import javax.persistence.*;
 
 
 @Entity
-@Table(name = "UserRegistry")
+@Table(name = "registration", schema = "wpl")
 public class UserRegistry {
-    private Long id;
+
+    @Column(name = "username")
     private String username;
-    private String password;
+
+    @Column(name = "passwd")
+    private String passwd;
+
     private String passwordConfirm;
 
+    @Column(name = "security_qn")
+    private String security_qn;
+
+    @Column(name = "security_qn_ans")
+    private String security_qn_ans;
+
+    @Column(name = "address")
     private String address;
+
+    @Column(name = "email")
     private String email;
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
     public String getUsername() {
         return username;
     }
@@ -32,12 +36,12 @@ public class UserRegistry {
         this.username = username;
     }
 
-    public String getPassword() {
-        return password;
+    public String getPasswd() {
+        return passwd;
     }
 
-    public void setPassword(String password) {
-        this.password = password;
+    public void setPasswd(String passwd) {
+        this.passwd = passwd;
     }
 
     @Transient
@@ -48,6 +52,23 @@ public class UserRegistry {
     public void setPasswordConfirm(String passwordConfirm) {
         this.passwordConfirm = passwordConfirm;
     }
+
+    public String getSecurity_qn() {
+        return security_qn;
+    }
+
+    public void setSecurity_qn(String security_qn) {
+        this.security_qn = security_qn;
+    }
+
+    public String getSecurity_qn_ans() {
+        return security_qn_ans;
+    }
+
+    public void setSecurity_qn_ans(String security_qn_ans) {
+        this.security_qn_ans = security_qn_ans;
+    }
+
     public String getAddress() {
         return address;
     }
@@ -63,5 +84,6 @@ public class UserRegistry {
     public void setEmail(String email) {
         this.email = email;
     }
+
 }
 
