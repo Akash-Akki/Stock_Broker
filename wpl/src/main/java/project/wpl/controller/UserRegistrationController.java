@@ -70,9 +70,10 @@ public class UserRegistrationController {
       @RequestParam Map<String, String> params) throws Exception {
     // TODO read request body and process
     // System.out.println(userRegistry.getUsername());
-    bankAccountRepository.save(bankAccount);
+    // System.out.println(bankAccount.getBalance());
+    userRegistryServiceImpl.createBankAccount(bankAccount);
     // registrationRepository.findAll().forEach(x -> System.out.println(x));
-    return new ResponseEntity("Test Success", HttpStatus.ACCEPTED);
+    return new ResponseEntity("Add Bank Account success", HttpStatus.ACCEPTED);
   }
 
 
