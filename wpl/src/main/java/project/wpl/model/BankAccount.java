@@ -1,45 +1,61 @@
 package project.wpl.model;
+
+import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
-import javax.persistence.Transient;
 
 
 @Entity
-@Table(name = "BankAccount")
+@Table(name = "bankaccount", schema = "public")
 public class BankAccount {
-    private String accountNumber;
-    private String routingNumber;
-    private String username;
-    private Double accountBalance;
-   
-    @Id
-	public String getAccountNumber() {
-		return accountNumber;
-	}
-	public void setAccountNumber(String accountNumber) {
-		this.accountNumber = accountNumber;
-	}
-	public String getRoutingNumber() {
-		return routingNumber;
-	}
-	public void setRoutingNumber(String routingNumber) {
-		this.routingNumber = routingNumber;
-	}
-	public String getUsername() {
-		return username;
-	}
-	public void setUsername(String username) {
-		this.username = username;
-	}
-	public Double getAccountBalance() {
-		return accountBalance;
-	}
-	public void setAccountBalance(Double accountBalance) {
-		this.accountBalance = accountBalance;
-	}
-	
+
+
+
+  @Column(name = "accountnumber")
+  private int accountnumber;
+
+  @Column(name = "routingnumber")
+  private String routingnumber;
+
+  @Column(name = "user_name")
+  private String user_name;
+
+  @Column(name = "balance")
+  private Double balance;
+
+  @Id
+  public int getAccountnumber() {
+    return accountnumber;
+  }
+
+  public void setAccountnumber(int accountnumber) {
+    this.accountnumber = accountnumber;
+  }
+
+  public String getRoutingnumber() {
+    return routingnumber;
+  }
+
+  public void setRoutingnumber(String routingnumber) {
+    this.routingnumber = routingnumber;
+  }
+
+  public String getUser_name() {
+    return user_name;
+  }
+
+  public void setUser_name(String user_name) {
+    this.user_name = user_name;
+  }
+
+  public Double getBalance() {
+    return balance;
+  }
+
+  public void setBalance(Double balance) {
+    this.balance = balance;
+  }
+
 
 }

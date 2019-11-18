@@ -8,7 +8,9 @@ import org.springframework.stereotype.Service;
 import project.wpl.constants.Constants;
 import project.wpl.exception.InputValidationException;
 import project.wpl.exception.ResourceNotFoundException;
+import project.wpl.model.BankAccount;
 import project.wpl.model.UserRegistry;
+import project.wpl.repository.BankAccountRepository;
 import project.wpl.repository.RegistrationRepository;
 
 @Service
@@ -17,6 +19,9 @@ public class UserRegistryServiceImpl {
 
   @Autowired
   private RegistrationRepository registrationRepository;
+
+  @Autowired
+  private BankAccountRepository bankAccountRepository;
 
 
   public void createNewUser(@Valid UserRegistry userRegistry) {
@@ -50,6 +55,13 @@ public class UserRegistryServiceImpl {
       throw new InputValidationException(
           "Security question doesn't match with the available security quesitons");
     }
+  }
+
+
+  public void createBankAccount(@Valid BankAccount bankAccount) {
+    // TODO Auto-generated method stub
+    System.out.println("account balance " + bankAccount.getBalance());
+    bankAccountRepository.save(bankAccount);
   }
 
 
