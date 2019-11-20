@@ -23,5 +23,6 @@ public class UserRegistrationController {
         //TODO read request body and process
         UserRegistrationResponse registrationResponse = new UserRegistrationResponse();
         return new ResponseEntity(registrationResponse, HttpStatus.ACCEPTED);
+       //System dfkfs
     }
 }
