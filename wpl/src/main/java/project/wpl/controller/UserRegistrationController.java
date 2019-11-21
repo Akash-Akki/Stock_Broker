@@ -22,8 +22,6 @@ import project.wpl.service.UserRegistryServiceImpl;
 @RestController
 public class UserRegistrationController {
 
-
-
   @Autowired
   private UserRegistryServiceImpl userRegistryServiceImpl;
 
