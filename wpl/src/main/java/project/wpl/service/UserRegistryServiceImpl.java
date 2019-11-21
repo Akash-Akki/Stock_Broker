@@ -3,6 +3,7 @@ package project.wpl.service;
 import java.util.Base64;
 import java.util.Optional;
 import javax.validation.Valid;
+import org.json.simple.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import project.wpl.constants.Constants;
@@ -62,6 +63,53 @@ public class UserRegistryServiceImpl {
     // TODO Auto-generated method stub
     System.out.println("account balance " + bankAccount.getBalance());
     bankAccountRepository.save(bankAccount);
+  }
+
+
+  public JSONObject validateSecurityQuestion(@Valid UserRegistry userRegistry)
+      throws InputValidationException {
+
+    // HashMap<String, String> map = new HashMap<String, String>();
+    JSONObject entity = new JSONObject();
+    Optional<UserRegistry> findByIdResult =
+        registrationRepository.findById(userRegistry.getUsername());
+
+    if (!findByIdResult.get().getSecurity_qn().equalsIgnoreCase(userRegistry.getSecurity_qn())) {
+      entity.put("status", "invalidquestion");
+    } else if (!findByIdResult.get().getSecurity_qn_ans()
+        .equalsIgnoreCase(userRegistry.getSecurity_qn_ans())) {
+      entity.put("status", "invalidanswer");
+    } else {
+      entity.put("status", "success");
+    }
+
+    return entity;
+
+  }
+
+
+  public void passwordReset(@Valid UserRegistry userRegistry) throws InputValidationException {
+    // TODO Auto-generated method stub
+
+    if (!userRegistry.getPasswd().equals(userRegistry.getPasswordConfirm())) {
+      throw new InputValidationException("This password doesn't match with the above passsword");
+    } else {
+      Optional<UserRegistry> findByIdResult =
+          registrationRepository.findById(userRegistry.getUsername());
+      if (findByIdResult.isPresent()) {
+        findByIdResult.get()
+            .setPasswd(Base64.getEncoder().encodeToString(userRegistry.getPasswd().getBytes()));
+        findByIdResult.get().setPasswordConfirm(
+            Base64.getEncoder().encodeToString(userRegistry.getPasswd().getBytes()));
+        registrationRepository.save(findByIdResult.get());
+      } else {
+        throw new ResourceNotFoundException("Username not found");
+      }
+
+    }
+
+
+
   }
 
 
