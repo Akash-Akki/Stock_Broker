@@ -2,6 +2,7 @@ package project.wpl.controller;
 
 import java.util.Map;
 import javax.validation.Valid;
+import org.json.simple.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -52,7 +53,7 @@ public class UserRegistrationController {
 
     try {
       userRegistryServiceImpl.updateUserInformation(userRegistry, params.get("username"));
-      System.out.println("size " + params.size());
+      // System.out.println("size " + params.size());
     } catch (ResourceNotFoundException e) {
       return new ResponseEntity(e.getMessage(), HttpStatus.FORBIDDEN);
     }
@@ -66,15 +67,26 @@ public class UserRegistrationController {
       produces = MediaType.APPLICATION_JSON_VALUE)
   public ResponseEntity addBankAccount(@Valid @RequestBody BankAccount bankAccount,
       @RequestParam Map<String, String> params) throws Exception {
-    // TODO read request body and process
-    // System.out.println(userRegistry.getUsername());
-    // System.out.println(bankAccount.getBalance());
     userRegistryServiceImpl.createBankAccount(bankAccount);
     // registrationRepository.findAll().forEach(x -> System.out.println(x));
     return new ResponseEntity("Add Bank Account success", HttpStatus.ACCEPTED);
   }
 
+  @PostMapping(value = "/forgotPassword", consumes = MediaType.APPLICATION_JSON_VALUE,
+      produces = MediaType.APPLICATION_JSON_VALUE)
+  public ResponseEntity forgotPassword(@Valid @RequestBody UserRegistry userRegistry,
+      @RequestParam Map<String, String> params) throws Exception {
+    JSONObject entities = userRegistryServiceImpl.validateSecurityQuestion(userRegistry);
+    return new ResponseEntity<Object>(entities, HttpStatus.OK);
+  }
 
+  @PutMapping(value = "/resetPassword", consumes = MediaType.APPLICATION_JSON_VALUE,
+      produces = MediaType.APPLICATION_JSON_VALUE)
+  public ResponseEntity resetPassword(@Valid @RequestBody UserRegistry userRegistry,
+      @RequestParam Map<String, String> params) throws Exception {
+    userRegistryServiceImpl.passwordReset(userRegistry);
+    return new ResponseEntity("reset password sucess", HttpStatus.OK);
+  }
 
   /*
    * @GetMapping("/findall") public List<UserRegistry> findAll(){
