@@ -1,10 +1,12 @@
 package project.wpl.service;
 
 import java.util.Base64;
+import java.util.HashSet;
 import java.util.Optional;
 import javax.validation.Valid;
 import org.json.simple.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import project.wpl.constants.Constants;
 import project.wpl.exception.InputValidationException;
@@ -13,6 +15,7 @@ import project.wpl.model.BankAccount;
 import project.wpl.model.UserRegistry;
 import project.wpl.repository.BankAccountRepository;
 import project.wpl.repository.RegistrationRepository;
+import project.wpl.repository.RoleRepository;
 
 @Service
 public class UserRegistryServiceImpl {
@@ -24,29 +27,21 @@ public class UserRegistryServiceImpl {
   @Autowired
   private BankAccountRepository bankAccountRepository;
 
+  @Autowired
+  private BCryptPasswordEncoder bCryptPasswordEncoder;
+
+  @Autowired
+  private RoleRepository roleRepository;
 
   public void createNewUser(@Valid UserRegistry userRegistry) {
     validate(userRegistry);
-    userRegistry.setPasswd(Base64.getEncoder().encodeToString(userRegistry.getPasswd().getBytes()));
+    userRegistry.setPasswd(bCryptPasswordEncoder.encode(userRegistry.getPasswd()));
+    userRegistry.setRoles(new HashSet<>(roleRepository.findAll()));
+    System.out.println("Saving user");
     registrationRepository.save(userRegistry);
   }
 
 
-  public void updateUserInformation(@Valid UserRegistry userRegistry, String username) {
-    // TODO Auto-generated method stub
-
-    Optional<UserRegistry> findByIdResult = registrationRepository.findById(username);
-    System.out.println("username " + username);
-
-    if (findByIdResult.isPresent()) {
-      findByIdResult.get().setEmail(userRegistry.getEmail());
-      findByIdResult.get().setAddress(userRegistry.getAddress());
-      registrationRepository.save(findByIdResult.get());
-    } else {
-      throw new ResourceNotFoundException("Username not found");
-    }
-
-  }
 
   public void validate(@Valid UserRegistry userRegistry) throws InputValidationException {
     if (!userRegistry.getPasswordConfirm().equals(userRegistry.getPasswd())) {
@@ -58,12 +53,6 @@ public class UserRegistryServiceImpl {
     }
   }
 
-
-  public void createBankAccount(@Valid BankAccount bankAccount) {
-    // TODO Auto-generated method stub
-    System.out.println("account balance " + bankAccount.getBalance());
-    bankAccountRepository.save(bankAccount);
-  }
 
 
   public JSONObject validateSecurityQuestion(@Valid UserRegistry userRegistry)
@@ -109,7 +98,10 @@ public class UserRegistryServiceImpl {
     }
 
 
+  }
 
+  public UserRegistry findByUsername(String username) {
+    return registrationRepository.findByUsername(username);
   }
 
 

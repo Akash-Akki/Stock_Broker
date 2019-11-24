@@ -6,5 +6,5 @@ import project.wpl.model.UserRegistry;
 
 @Repository
 public interface RegistrationRepository extends CrudRepository<UserRegistry,String> {
-
+    UserRegistry findByUsername(String username);
 }

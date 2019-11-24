@@ -7,7 +7,5 @@ import project.wpl.model.BankAccount;
 
 @Repository
 public interface BankAccountRepository extends CrudRepository<BankAccount, String>{
-	
-	
 
 }
