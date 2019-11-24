@@ -14,6 +14,8 @@ import project.wpl.model.Role;
 import project.wpl.model.UserRegistry;
 import project.wpl.repository.BankAccountRepository;
 import project.wpl.repository.RegistrationRepository;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.validation.Valid;
 import java.util.HashSet;
@@ -29,6 +31,8 @@ public class UserDetailServiceImpl implements UserDetailsService {
     @Autowired
     private RegistrationRepository registrationRepository;
 
+    private static final Logger logger = LoggerFactory.getLogger(UserDetailServiceImpl.class);
+
     public void updateUserInformation(@Valid UserRegistry userRegistry, String username) {
         // TODO Auto-generated method stub
 
@@ -40,6 +44,7 @@ public class UserDetailServiceImpl implements UserDetailsService {
             findByIdResult.get().setAddress(userRegistry.getAddress());
             registrationRepository.save(findByIdResult.get());
         } else {
+            logger.error("User validation failed");
             throw new ResourceNotFoundException("Username not found");
         }
 
@@ -48,6 +53,7 @@ public class UserDetailServiceImpl implements UserDetailsService {
     public void createBankAccount(@Valid BankAccount bankAccount) {
         // TODO Auto-generated method stub
         System.out.println("account balance " + bankAccount.getBalance());
+        logger.debug("Account Balance "+ bankAccount.getBalance());
         bankAccountRepository.save(bankAccount);
     }
 

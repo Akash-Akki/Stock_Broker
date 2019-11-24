@@ -3,6 +3,8 @@ package project.wpl.controller;
 import java.util.Map;
 import javax.validation.Valid;
 import org.json.simple.JSONObject;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -42,6 +44,8 @@ public class UserRegistrationController {
   @Autowired
   private AuthenticationManager authenticationManager;
 
+    private static final Logger logger = LoggerFactory.getLogger(UserRegistrationController.class);
+
 
   @PostMapping(value = "/userRegistration", consumes = MediaType.APPLICATION_JSON_VALUE,
       produces = MediaType.APPLICATION_JSON_VALUE)
@@ -49,6 +53,7 @@ public class UserRegistrationController {
       @RequestParam Map<String, String> params) throws Exception {
     try {
       System.out.println("Creating user");
+      logger.debug("Creating User");
       userRegistryServiceImpl.createNewUser(userRegistry);
     } catch (InputValidationException e) {
       return new ResponseEntity(e.getMessage(), HttpStatus.FORBIDDEN);
@@ -104,6 +109,7 @@ public class UserRegistrationController {
   @PostMapping("/login")
   public String login(@Valid @RequestBody UserRegistry userRegistry) {
     System.out.println("logging in");
+    logger.debug("logging in");
     UserDetails userDetails = userDetailsService.loadUserByUsername(userRegistry.getUsername());
     UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken = new UsernamePasswordAuthenticationToken(userDetails, userRegistry.getPasswd(), userDetails.getAuthorities());
    System.out.println("Auth test");
