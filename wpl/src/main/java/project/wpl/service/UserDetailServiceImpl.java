@@ -18,6 +18,8 @@ import project.wpl.model.Role;
 import project.wpl.model.UserRegistry;
 import project.wpl.repository.BankAccountRepository;
 import project.wpl.repository.RegistrationRepository;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @Service
 public class UserDetailServiceImpl implements UserDetailsService {
