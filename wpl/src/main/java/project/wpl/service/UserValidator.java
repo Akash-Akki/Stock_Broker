@@ -25,19 +25,24 @@ public class UserValidator implements Validator {
 
         ValidationUtils.rejectIfEmptyOrWhitespace(errors, "username", "NotEmpty");
         if (user.getUsername().length() < 6 || user.getUsername().length() > 32) {
-            errors.rejectValue("username", "Size.userForm.username");
+            errors.rejectValue("username","Size.userForm.username");
+           // errors.rejectValue("errorcode", "Size.userForm.username");
+            return;
         }
         if (registrationRepository.findByUsername(user.getUsername()) != null) {
-            errors.rejectValue("username", "Duplicate.userForm.username");
+            errors.rejectValue( "username","Duplicate.userForm.username");
+            return;
         }
 
-        ValidationUtils.rejectIfEmptyOrWhitespace(errors, "password", "NotEmpty");
+        ValidationUtils.rejectIfEmptyOrWhitespace(errors, "passwd", "NotEmpty");
         if (user.getPasswd().length() < 8 || user.getPasswd().length() > 32) {
-            errors.rejectValue("password", "Size.userForm.password");
+            errors.rejectValue("passwd","Size.userForm.password");
+            return;
         }
 
         if (!user.getPasswordConfirm().equals(user.getPasswd())) {
-            errors.rejectValue("passwordConfirm", "Diff.userForm.passwordConfirm");
+            errors.reject( "passwordConfirm","Diff.userForm.passwordConfirm");
+            return;
         }
     }
 }

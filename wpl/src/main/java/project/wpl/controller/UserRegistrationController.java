@@ -17,6 +17,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -31,6 +32,7 @@ import project.wpl.model.UserRegistry;
 import project.wpl.repository.BankAccountRepository;
 import project.wpl.service.UserDetailServiceImpl;
 import project.wpl.service.UserRegistryServiceImpl;
+import project.wpl.service.UserValidator;
 
 
 @RestController
@@ -51,13 +53,22 @@ public class UserRegistrationController {
   @Autowired
   private AuthenticationManager authenticationManager;
 
+  @Autowired
+  private UserValidator userValidator;
 
   @PostMapping(value = "/userRegistration", consumes = MediaType.APPLICATION_JSON_VALUE,
       produces = MediaType.APPLICATION_JSON_VALUE)
   public ResponseEntity createDataSet(@Valid @RequestBody UserRegistry userRegistry,
-      @RequestParam Map<String, String> params) throws Exception {
+                                      @RequestParam Map<String, String> params, BindingResult bindingResult) throws Exception {
     try {
       System.out.println("Creating user");
+       userValidator.validate(userRegistry,bindingResult);
+       if(bindingResult.hasErrors())
+       {
+         return new ResponseEntity("invalid username or password - username should be minimum of 6 characters and password should be minimum of 8 characters ",HttpStatus.FORBIDDEN);
+       }
+
+
       userRegistryServiceImpl.createNewUser(userRegistry);
     } catch (InputValidationException e) {
       return new ResponseEntity(e.getMessage(), HttpStatus.FORBIDDEN);
@@ -154,7 +165,7 @@ public class UserRegistrationController {
 
 
 
-  @PostMapping(value = "/logout")
+  @GetMapping(value = "/customlogout")
   public String logoutPage(HttpServletRequest request, HttpServletResponse response) {
     // Authentication auth = SecurityContextHolder.getContext().getAuthentication();
     HttpSession session = request.getSession(false);
