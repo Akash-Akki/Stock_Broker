@@ -3,6 +3,7 @@ package project.wpl.service;
 import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
+import javax.naming.InsufficientResourcesException;
 import javax.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.GrantedAuthority;
@@ -12,9 +13,11 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import project.wpl.exception.InsufficientFundsException;
 import project.wpl.exception.ResourceNotFoundException;
 import project.wpl.model.BankAccount;
 import project.wpl.model.Role;
+import project.wpl.model.TransferInfo;
 import project.wpl.model.UserRegistry;
 import project.wpl.repository.BankAccountRepository;
 import project.wpl.repository.RegistrationRepository;
@@ -71,4 +74,22 @@ public class UserDetailServiceImpl implements UserDetailsService {
         user.getPasswd(), grantedAuthorities);
 
   }
+   @Transactional
+    public void transferMoney(TransferInfo transferInfo) throws  InsufficientFundsException{
+
+           Optional<BankAccount> findByIdResult = bankAccountRepository.findById(transferInfo.getToAccounNumber());
+           Optional<BankAccount> findFromAccountById = bankAccountRepository.findById(transferInfo.getFromAccountNumber());
+           double fromAcccountBalance = findFromAccountById.get().getBalance();
+
+           if(fromAcccountBalance<transferInfo.getAmountToTransfer()) throw new InsufficientFundsException("Insufficent funds");
+           double balance = findByIdResult.get().getBalance();
+           double updatedBalance = balance + transferInfo.getAmountToTransfer();
+           findByIdResult.get().setBalance(updatedBalance);
+           bankAccountRepository.save(findByIdResult.get());
+
+
+           double updatedFromAccountBalance = fromAcccountBalance - transferInfo.getAmountToTransfer();
+           findFromAccountById.get().setBalance(updatedFromAccountBalance);
+           bankAccountRepository.save(findFromAccountById.get());
+    }
 }

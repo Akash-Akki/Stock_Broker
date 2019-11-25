@@ -6,6 +6,6 @@ import org.springframework.stereotype.Repository;
 import project.wpl.model.BankAccount;
 
 @Repository
-public interface BankAccountRepository extends CrudRepository<BankAccount, String>{
+public interface BankAccountRepository extends CrudRepository<BankAccount, Integer>{
 
 }

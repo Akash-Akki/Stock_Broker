@@ -25,9 +25,11 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import project.wpl.exception.InputValidationException;
+import project.wpl.exception.InsufficientFundsException;
 import project.wpl.exception.ResourceNotFoundException;
 import project.wpl.exception.SessionNotFoundException;
 import project.wpl.model.BankAccount;
+import project.wpl.model.TransferInfo;
 import project.wpl.model.UserRegistry;
 import project.wpl.repository.BankAccountRepository;
 import project.wpl.service.UserDetailServiceImpl;
@@ -117,10 +119,31 @@ public class UserRegistrationController {
       return new ResponseEntity(e.getMessage(), HttpStatus.FORBIDDEN);
     }
     userDetailService.createBankAccount(bankAccount, username);
-    System.out.println("username is addbannkaccount " + username);
+   // System.out.println("username is addbannkaccount " + username);
     // registrationRepository.findAll().forEach(x -> System.out.println(x));
     return new ResponseEntity("Add Bank Account success", HttpStatus.ACCEPTED);
   }
+
+  @PostMapping(value="/transferMoney", consumes = MediaType.APPLICATION_JSON_VALUE,
+          produces = MediaType.APPLICATION_JSON_VALUE)
+  public ResponseEntity moneyTransfer(@Valid @RequestBody TransferInfo transferInfo,
+                                      @RequestParam Map<String ,String> params,HttpSession session)
+  {
+     try {
+       userDetailService.transferMoney(transferInfo);
+     }
+     catch(InsufficientFundsException e)
+     {
+       return new ResponseEntity(e.getMessage(),HttpStatus.FORBIDDEN);
+     }
+      return new ResponseEntity("sucesfully amount transferred",HttpStatus.FORBIDDEN);
+  }
+
+
+
+
+
+
 
   @PostMapping(value = "/forgotPassword", consumes = MediaType.APPLICATION_JSON_VALUE,
       produces = MediaType.APPLICATION_JSON_VALUE)
@@ -179,19 +202,6 @@ public class UserRegistrationController {
     return "error";
 
   }
-
-  // @GetMapping(value = "/logout")
-  // public ResponseEntity logoutPage(HttpServletRequest request, HttpServletResponse response) {
-  // Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-  // System.out.println("in logout");
-  // if (auth != null) {
-  // request.getSession().invalidate();
-  // new SecurityContextLogoutHandler().logout(request, response, auth);
-  // }
-  // return new ResponseEntity("logged out sucessfullly", HttpStatus.OK);
-  // }
-  //
-
 
   @GetMapping({"/", "/welcome"})
   public String welcome(Model model, Principal principal) {
