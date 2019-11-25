@@ -1,6 +1,10 @@
 package project.wpl.controller;
 
+import java.security.Principal;
 import java.util.Map;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
 import org.json.simple.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,13 +17,18 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 import project.wpl.exception.InputValidationException;
 import project.wpl.exception.ResourceNotFoundException;
+import project.wpl.exception.SessionNotFoundException;
 import project.wpl.model.BankAccount;
 import project.wpl.model.UserRegistry;
 import project.wpl.repository.BankAccountRepository;
-import project.wpl.service.SecurityServiceImpl;
 import project.wpl.service.UserDetailServiceImpl;
 import project.wpl.service.UserRegistryServiceImpl;
 
@@ -61,13 +70,20 @@ public class UserRegistrationController {
   @PutMapping(value = "/updateUserInfo", consumes = MediaType.APPLICATION_JSON_VALUE,
       produces = MediaType.APPLICATION_JSON_VALUE)
   public ResponseEntity updateDataSet(@Valid @RequestBody UserRegistry userRegistry,
-      @RequestParam Map<String, String> params) throws Exception {
+      @RequestParam Map<String, String> params, HttpSession session) throws Exception {
     // System.out.println("size " + params.size());
+    String username = (String) session.getAttribute("username");
 
     try {
-      userDetailService.updateUserInformation(userRegistry, params.get("username"));
+      if (username == null) {
+        throw new SessionNotFoundException("User is Not logged in");
+      }
+      userDetailService.updateUserInformation(userRegistry, username);
+
       // System.out.println("size " + params.size());
     } catch (ResourceNotFoundException e) {
+      return new ResponseEntity(e.getMessage(), HttpStatus.FORBIDDEN);
+    } catch (SessionNotFoundException e) {
       return new ResponseEntity(e.getMessage(), HttpStatus.FORBIDDEN);
     }
     // registrationRepository.findAll().forEach(x -> System.out.println(x));
@@ -79,8 +95,18 @@ public class UserRegistrationController {
   @PostMapping(value = "/addBankAccount", consumes = MediaType.APPLICATION_JSON_VALUE,
       produces = MediaType.APPLICATION_JSON_VALUE)
   public ResponseEntity addBankAccount(@Valid @RequestBody BankAccount bankAccount,
-      @RequestParam Map<String, String> params) throws Exception {
-    userDetailService.createBankAccount(bankAccount);
+      @RequestParam Map<String, String> params, HttpSession session) throws Exception {
+    String username = (String) session.getAttribute("username");
+    try {
+
+      if (username == null) {
+        throw new SessionNotFoundException("User Not logged in");
+      }
+    } catch (SessionNotFoundException e) {
+      return new ResponseEntity(e.getMessage(), HttpStatus.FORBIDDEN);
+    }
+    userDetailService.createBankAccount(bankAccount, username);
+    System.out.println("username is addbannkaccount " + username);
     // registrationRepository.findAll().forEach(x -> System.out.println(x));
     return new ResponseEntity("Add Bank Account success", HttpStatus.ACCEPTED);
   }
@@ -102,25 +128,68 @@ public class UserRegistrationController {
   }
 
   @PostMapping("/login")
-  public String login(@Valid @RequestBody UserRegistry userRegistry) {
+  public String login(@Valid @RequestBody UserRegistry userRegistry, HttpServletRequest request,
+      Principal principal) {
     System.out.println("logging in");
+    // System.out.println("principal user " + principal.getName());
     UserDetails userDetails = userDetailsService.loadUserByUsername(userRegistry.getUsername());
-    UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken = new UsernamePasswordAuthenticationToken(userDetails, userRegistry.getPasswd(), userDetails.getAuthorities());
-   System.out.println("Auth test");
+    UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken =
+        new UsernamePasswordAuthenticationToken(userDetails, userRegistry.getPasswd(),
+            userDetails.getAuthorities());
+    System.out.println("Auth test");
     authenticationManager.authenticate(usernamePasswordAuthenticationToken);
 
     if (usernamePasswordAuthenticationToken.isAuthenticated()) {
+      // create session
+      HttpSession session = request.getSession();
+      session.setAttribute("username", userRegistry.getUsername());
+
       SecurityContextHolder.getContext().setAuthentication(usernamePasswordAuthenticationToken);
       System.out.println(String.format("Auto login %s successfully!", userRegistry.getUsername()));
-    } else return "Username or password invalid";
+    } else
+      return "Username or password invalid";
 
     return "login";
   }
 
+
+
+  @PostMapping(value = "/logout")
+  public String logoutPage(HttpServletRequest request, HttpServletResponse response) {
+    // Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+    HttpSession session = request.getSession(false);
+    SecurityContextHolder.clearContext();
+    session = request.getSession();
+    if (session != null) {
+      session.invalidate();
+      return "logged out";
+    }
+
+    return "error";
+
+  }
+
+  // @GetMapping(value = "/logout")
+  // public ResponseEntity logoutPage(HttpServletRequest request, HttpServletResponse response) {
+  // Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+  // System.out.println("in logout");
+  // if (auth != null) {
+  // request.getSession().invalidate();
+  // new SecurityContextLogoutHandler().logout(request, response, auth);
+  // }
+  // return new ResponseEntity("logged out sucessfullly", HttpStatus.OK);
+  // }
+  //
+
+
   @GetMapping({"/", "/welcome"})
-  public String welcome(Model model) {
+  public String welcome(Model model, Principal principal) {
+    System.out.println(principal.getName());
     return "welcome";
   }
+
+
+
   /*
    * @GetMapping("/findall") public List<UserRegistry> findAll(){
    * 

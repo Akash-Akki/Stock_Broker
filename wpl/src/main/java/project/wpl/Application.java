@@ -7,11 +7,12 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.boot.web.servlet.support.SpringBootServletInitializer;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
+import org.springframework.session.jdbc.config.annotation.web.http.EnableJdbcHttpSession;
 import project.wpl.repository.BankAccountRepository;
 import project.wpl.repository.RegistrationRepository;
 import project.wpl.repository.RoleRepository;
 
-
+@EnableJdbcHttpSession
 @EnableJpaRepositories("project/wpl/repository")
 @SpringBootApplication
 public class Application extends SpringBootServletInitializer {
