@@ -29,6 +29,7 @@ import project.wpl.exception.InsufficientFundsException;
 import project.wpl.exception.ResourceNotFoundException;
 import project.wpl.exception.SessionNotFoundException;
 import project.wpl.model.BankAccount;
+import project.wpl.model.BuyStock;
 import project.wpl.model.TransferInfo;
 import project.wpl.model.UserRegistry;
 import project.wpl.repository.BankAccountRepository;
@@ -136,10 +137,23 @@ public class UserRegistrationController {
      {
        return new ResponseEntity(e.getMessage(),HttpStatus.FORBIDDEN);
      }
-      return new ResponseEntity("sucesfully amount transferred",HttpStatus.FORBIDDEN);
+      return new ResponseEntity("sucesfully amount transferred",HttpStatus.ACCEPTED);
   }
 
 
+  @PostMapping(value="/buy",consumes = MediaType.APPLICATION_JSON_VALUE,
+          produces = MediaType.APPLICATION_JSON_VALUE)
+  public ResponseEntity buyStock(@Valid @RequestBody BuyStock buyStock,@RequestParam Map<String,String> params,HttpSession session)
+  {
+    String username = (String) session.getAttribute("username");
+   try {
+     userDetailService.stockBuy(buyStock,username);
+   }
+   catch(InsufficientFundsException e){
+     return new ResponseEntity(e.getMessage(),HttpStatus.FORBIDDEN);
+   }
+     return new ResponseEntity("stock bought succesfully",HttpStatus.ACCEPTED);
+  }
 
 
 
