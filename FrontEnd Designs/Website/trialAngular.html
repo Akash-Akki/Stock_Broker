@@ -13,7 +13,7 @@
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
     <script>
 $(document).ready(function(){
-        $( "form" ).submit(function( event ) {
+        $("form").submit(function( event ) {
   var formArray =  $( this ).serializeArray() ;
   event.preventDefault();
   var returnArray = {};
@@ -21,17 +21,34 @@ $(document).ready(function(){
     returnArray[formArray[i]['name']] = formArray[i]['value'];
   }
   console.log(returnArray);
- const userAction = async () => {
-  const response = await fetch('http://localhost:9090/userregistration', {
-    method: 'POST',
-    body: myBody, // string or object
-    headers: {
-      'Content-Type': 'application/json'
-    }
+
+<!--  const userAction = async () => {-->
+<!--   console.log("Hell");-->
+<!--  const response = await fetch('http://localhost:9090/userregistration', {-->
+<!--    method: 'POST',-->
+<!--    body: returnArray, // string or object-->
+<!--    headers: {-->
+<!--      'Content-Type': 'application/json'-->
+<!--    }-->
+<!--  });-->
+
+<!--  const myJson = await response.json(); //extract JSON from the http response-->
+<!--  console.log("hello"+myJson);-->
+<!--  // do something with myJson-->
+<!--}-->
+
+    var xhttp = new XMLHttpRequest();
+    xhttp.onreadystatechange = function() {
+         if (this.readyState == 4 && this.status == 200) {
+             alert(this.responseText);
+         }
+    };
+    xhttp.open("POST", "http://localhost:9090/userregistration", true);
+    xhttp.setRequestHeader("Content-type", "application/json");
+    xhttp.send(returnArray);
+
   });
-  const myJson = await response.json(); //extract JSON from the http response
-  // do something with myJson
-}
+});
 </script>
 </head>
 <div class="main">
