@@ -17,25 +17,14 @@ $(document).ready(function(){
   var formArray =  $( this ).serializeArray() ;
   event.preventDefault();
   var returnArray = {};
+  var finalArray = {};
+  console.log(formArray);
   for (var i = 0; i < formArray.length; i++){
     returnArray[formArray[i]['name']] = formArray[i]['value'];
   }
-  console.log(returnArray);
+  finalArray = JSON.stringify(returnArray);
+  console.log(finalArray);
 
-<!--  const userAction = async () => {-->
-<!--   console.log("Hell");-->
-<!--  const response = await fetch('http://localhost:9090/userregistration', {-->
-<!--    method: 'POST',-->
-<!--    body: returnArray, // string or object-->
-<!--    headers: {-->
-<!--      'Content-Type': 'application/json'-->
-<!--    }-->
-<!--  });-->
-
-<!--  const myJson = await response.json(); //extract JSON from the http response-->
-<!--  console.log("hello"+myJson);-->
-<!--  // do something with myJson-->
-<!--}-->
 
     var xhttp = new XMLHttpRequest();
     xhttp.onreadystatechange = function() {
@@ -62,7 +51,7 @@ $(document).ready(function(){
                     <form method="POST" class="register-form" id="register-form"  action="">
                         <div class="form-group">
                             <label for="name"><i class="zmdi zmdi-account material-icons-name"></i></label>
-                            <input type="text" name="Name" id="name" placeholder="Your Name"/>
+                            <input type="text" name="username" id="name" placeholder="Your Name"/>
                         </div>
                         <div class="form-group">
                             <label for="email"><i class="zmdi zmdi-email"></i></label>
@@ -74,7 +63,7 @@ $(document).ready(function(){
                         </div>
                         <div class="form-group">
                             <label for="agree-term" class="label-agree-term"><i class="zmdi zmdi-lock"></i> &nbsp; <span><span></span></span>Security Question</label>
-                            <select name="Security Question">
+                            <select name="security_qn">
                                 <option value="What is your mother's maiden name?">What is your mother's maiden name?</option>
                                 <option value="What is your first pet's name?">What is your first pet's name?</option>
                                 <option value="What is your favorite game?">What is your favorite game?</option>
@@ -83,16 +72,16 @@ $(document).ready(function(){
                             </select>
                             <div class="form-group">
                                 <label for="pass"><i class="zmdi zmdi-lock"></i></label>
-                                <input type="text" name="securityAns" id="securityans" placeholder="Your Security Answer"/>
+                                <input type="text" name="security_qn_ans" id="securityans" placeholder="Your Security Answer"/>
                             </div>
                         </div>
                         <div class="form-group">
                             <label for="pass"><i class="zmdi zmdi-lock"></i></label>
-                            <input type="password" name="pass" id="pass" placeholder="Password"/>
+                            <input type="password" name="passwd" id="pass" placeholder="Password"/>
                         </div>
                         <div class="form-group">
                             <label for="pass"><i class="zmdi zmdi-lock-outline"></i></label>
-                            <input type="password" name="re_pass" id="re_pass" placeholder="Repeat your password"/>
+                            <input type="password" name="passwordConfirm" id="re_pass" placeholder="Repeat your password"/>
                         </div>
                         <div class="form-group">
                             <input type="checkbox" name="agree-term" id="agree-term" class="agree-term" />
