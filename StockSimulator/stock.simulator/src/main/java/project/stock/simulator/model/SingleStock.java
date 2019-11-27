@@ -1,4 +1,4 @@
-package project.wpl.simulation;
+package project.stock.simulator.model;
 
 public class SingleStock {
 

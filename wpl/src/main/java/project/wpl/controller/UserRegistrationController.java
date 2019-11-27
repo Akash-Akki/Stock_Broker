@@ -36,7 +36,8 @@ import project.wpl.repository.BankAccountRepository;
 import project.wpl.service.UserDetailServiceImpl;
 import project.wpl.service.UserRegistryServiceImpl;
 import project.wpl.service.UserValidator;
-
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @RestController
 public class UserRegistrationController {
@@ -59,21 +60,27 @@ public class UserRegistrationController {
   @Autowired
   private UserValidator userValidator;
 
+  Logger logger = LoggerFactory.getLogger(UserRegistrationController.class);
+
   @PostMapping(value = "/userRegistration", consumes = MediaType.APPLICATION_JSON_VALUE,
       produces = MediaType.APPLICATION_JSON_VALUE)
   public ResponseEntity createDataSet(@Valid @RequestBody UserRegistry userRegistry,
                                       @RequestParam Map<String, String> params, BindingResult bindingResult) throws Exception {
     try {
       System.out.println("Creating user");
+      logger.info("Creating new user"+userRegistry.getUsername());
        userValidator.validate(userRegistry,bindingResult);
        if(bindingResult.hasErrors())
        {
+         logger.error("Error registering user: Invalid username or password - username should be minimum of 6 characters and password should be minimum of 8 characters ");
          return new ResponseEntity("invalid username or password - username should be minimum of 6 characters and password should be minimum of 8 characters ",HttpStatus.FORBIDDEN);
        }
 
 
       userRegistryServiceImpl.createNewUser(userRegistry);
+      logger.info("User Registration Successful "+userRegistry.getUsername());
     } catch (InputValidationException e) {
+      logger.error(e.getMessage());
       return new ResponseEntity(e.getMessage(), HttpStatus.FORBIDDEN);
     }
     // registrationRepository.findAll().forEach(x -> System.out.println(x));
