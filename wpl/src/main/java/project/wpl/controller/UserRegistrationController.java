@@ -24,10 +24,7 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-import project.wpl.exception.InputValidationException;
-import project.wpl.exception.InsufficientFundsException;
-import project.wpl.exception.ResourceNotFoundException;
-import project.wpl.exception.SessionNotFoundException;
+import project.wpl.exception.*;
 import project.wpl.model.BankAccount;
 import project.wpl.model.BuyStock;
 import project.wpl.model.TransferInfo;
@@ -75,8 +72,6 @@ public class UserRegistrationController {
          logger.error("Error registering user: Invalid username or password - username should be minimum of 6 characters and password should be minimum of 8 characters ");
          return new ResponseEntity("invalid username or password - username should be minimum of 6 characters and password should be minimum of 8 characters ",HttpStatus.FORBIDDEN);
        }
-
-
       userRegistryServiceImpl.createNewUser(userRegistry);
       logger.info("User Registration Successful "+userRegistry.getUsername());
     } catch (InputValidationException e) {
@@ -165,6 +160,19 @@ public class UserRegistrationController {
 
 
 
+  @PostMapping(value="/sell",consumes = MediaType.APPLICATION_JSON_VALUE,
+          produces = MediaType.APPLICATION_JSON_VALUE)
+  public ResponseEntity sellStock(@Valid @RequestBody BuyStock buyStock,@RequestParam Map<String,String> params,HttpSession session)
+  {
+    String username = (String) session.getAttribute("username");
+    try {
+      userDetailService.stockSell(buyStock,username);
+    }
+    catch(InsufficientStocksException e){
+      return new ResponseEntity(e.getMessage(),HttpStatus.FORBIDDEN);
+    }
+    return new ResponseEntity("stock sold succesfully",HttpStatus.ACCEPTED);
+  }
 
   @PostMapping(value = "/forgotPassword", consumes = MediaType.APPLICATION_JSON_VALUE,
       produces = MediaType.APPLICATION_JSON_VALUE)

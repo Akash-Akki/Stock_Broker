@@ -9,6 +9,9 @@ public class UserShare {
 
     @Column(name="username")
     private String username;
+
+
+
     @Column(name="symbol")
     private String symbol;
     @Column(name="company")
@@ -59,4 +62,5 @@ public class UserShare {
     public void setSymbol(String symbol) {
         this.symbol = symbol;
     }
+
 }

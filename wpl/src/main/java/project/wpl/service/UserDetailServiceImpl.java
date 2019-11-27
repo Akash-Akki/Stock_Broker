@@ -14,6 +14,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import project.wpl.exception.InsufficientFundsException;
+import project.wpl.exception.InsufficientStocksException;
 import project.wpl.exception.ResourceNotFoundException;
 import project.wpl.model.*;
 import project.wpl.repository.BankAccountRepository;
@@ -106,30 +107,53 @@ public class UserDetailServiceImpl implements UserDetailsService {
         double totalPrice = buyStock.getNumberOfUnits()*stockPrice;
         Optional<BankAccount> findByAccountNumber = bankAccountRepository.findById(accountNumber);
         double currentAccountBalance=findByAccountNumber.get().getBalance();
+
           if(currentAccountBalance-totalPrice<0)
                throw new InsufficientFundsException("Insufficent funds");
-          double updateBalance=currentAccountBalance-totalPrice;
+        double updateBalance=currentAccountBalance-totalPrice;
         findByAccountNumber.get().setBalance(updateBalance);
         bankAccountRepository.save(findByAccountNumber.get());
 
        UserShare findUserShareBySymbol = userShareRepository.findBySymbol(buyStock.getSymbol());
-
+      System.out.println("share symbol"+findUserShareBySymbol);
+       UserShare userShare =new UserShare();
        if(findUserShareBySymbol != null)
-           {
-                     System.out.println("result is "+findUserShareBySymbol.toString());
-                      /*int quantity=findUserShareBySymbol.get().getQuantity();
+       {
+                     // System.out.println("result is "+findUserShareBySymbol.toString());
+                      int quantity=findUserShareBySymbol.getQuantity();
                       int updatedQuantity= quantity+buyStock.getNumberOfUnits();
-                      findUserShareBySymbol.get().setQuantity(updatedQuantity);
-                      userShareRepository.save(findUserShareBySymbol.get());*/
+                      findUserShareBySymbol.setQuantity(updatedQuantity);
+                      userShareRepository.save(findUserShareBySymbol);
+       }
+       else{
+                     System.out.println("find By Symbol is "+ buyStock.getSymbol());
+                     //String symbol=buyStock.getSymbol();
+                     userShare.setSymbol(buyStock.getSymbol());
+                     userShare.setUsername(username);
+                     userShare.setQuantity(buyStock.getNumberOfUnits());
+                     userShare.setCompany(buyStock.getCompany_name());
+                     System.out.println("before saving");
+                     userShareRepository.save(userShare);
            }
-           else{
-               System.out.println("find By Symbol is "+ buyStock.getSymbol());
+    }
 
-                  findUserShareBySymbol.setSymbol(buyStock.getSymbol());
-                  findUserShareBySymbol.setCompany(buyStock.getCompany_name());
-                  findUserShareBySymbol.setQuantity(buyStock.getNumberOfUnits());
-                  findUserShareBySymbol.setUsername(username);
-                  userShareRepository.save(findUserShareBySymbol);
-           }
+    public void stockSell(BuyStock buyStock, String username) throws InsufficientStocksException {
+      int accountNumber= buyStock.getAccountNumber();
+        Optional<CurrentPrice> findByCurrentPrice = currentPriceRepository.findById(buyStock.getSymbol());
+        double stockPrice=findByCurrentPrice.get().getPrice();
+        double totalPrice = buyStock.getNumberOfUnits()*stockPrice;
+        Optional<BankAccount> findByAccountNumber = bankAccountRepository.findById(accountNumber);
+        double currentAccountBalance=findByAccountNumber.get().getBalance();
+
+        double updateBalance=currentAccountBalance+totalPrice;
+        findByAccountNumber.get().setBalance(updateBalance);
+        bankAccountRepository.save(findByAccountNumber.get());
+        UserShare findUserShareBySymbol = userShareRepository.findBySymbol(buyStock.getSymbol());
+        int quantity=findUserShareBySymbol.getQuantity();
+           if(buyStock.getNumberOfUnits()>quantity)
+               throw new InsufficientStocksException("Insufficent stocks");
+        int updatedQuantity= quantity-buyStock.getNumberOfUnits();
+        findUserShareBySymbol.setQuantity(updatedQuantity);
+        userShareRepository.save(findUserShareBySymbol);
     }
 }
