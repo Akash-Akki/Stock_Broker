@@ -32,9 +32,9 @@ $(document).ready(function(){
              alert(this.responseText);
          }
     };
-    xhttp.open("POST", "http://localhost:9090/userregistration", true);
+    xhttp.open("POST", "http://localhost:9090/userRegistration", true);
     xhttp.setRequestHeader("Content-type", "application/json");
-    xhttp.send(returnArray);
+    xhttp.send(finalArray);
 
   });
 });
@@ -64,11 +64,9 @@ $(document).ready(function(){
                         <div class="form-group">
                             <label for="agree-term" class="label-agree-term"><i class="zmdi zmdi-lock"></i> &nbsp; <span><span></span></span>Security Question</label>
                             <select name="security_qn">
-                                <option value="What is your mother's maiden name?">What is your mother's maiden name?</option>
-                                <option value="What is your first pet's name?">What is your first pet's name?</option>
-                                <option value="What is your favorite game?">What is your favorite game?</option>
-                                <option value="What is your dad's favorite game?">What is your dad's favorite game?</option>
-                                <option value="What is your dream job?">What is your dream job?</option>
+                                <option value="What primary school did you attend?">What primary school did you attend?</option>
+                                <option value="What was the house number and street name you lived in as a child?">What was the house number and street name you lived in as a child?</option>
+                                <option value="What were the last four digits of your childhood telephone number?">What were the last four digits of your childhood telephone number?</option>
                             </select>
                             <div class="form-group">
                                 <label for="pass"><i class="zmdi zmdi-lock"></i></label>
@@ -82,10 +80,6 @@ $(document).ready(function(){
                         <div class="form-group">
                             <label for="pass"><i class="zmdi zmdi-lock-outline"></i></label>
                             <input type="password" name="passwordConfirm" id="re_pass" placeholder="Repeat your password"/>
-                        </div>
-                        <div class="form-group">
-                            <input type="checkbox" name="agree-term" id="agree-term" class="agree-term" />
-                            <label for="agree-term" class="label-agree-term"><span><span></span></span>I agree all statements in  <a href="#" class="term-service">Terms of service</a></label>
                         </div>
                         <div class="form-group form-button">
                             <input type="submit" name="signup" id="signup" class="form-submit" value="Register"/>
