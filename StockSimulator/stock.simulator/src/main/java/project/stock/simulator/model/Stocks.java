@@ -1,4 +1,4 @@
-package project.wpl.simulation;
+package project.stock.simulator.model;
 
 import java.util.List;
 
