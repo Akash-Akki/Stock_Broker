@@ -2,13 +2,13 @@ package project.stock.simulator.controller;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
+import com.google.gson.stream.JsonReader;
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeConstants;
 import org.joda.time.LocalDate;
-import org.joda.time.LocalTime;
-import org.json.simple.JSONObject;
 import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -16,8 +16,9 @@ import org.springframework.web.bind.annotation.RestController;
 import project.stock.simulator.model.SingleStock;
 import project.stock.simulator.model.Stocks;
 
-import java.io.FileWriter;
-import java.io.IOException;
+import java.io.*;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
@@ -209,11 +210,142 @@ public class StockDataController {
         return json.toString();
     }
 
+    @GetMapping(value = "/yearToDate/{symbol}", produces = MediaType.APPLICATION_JSON_VALUE)
+    @ResponseBody
+    public String getYearToDate(@RequestParam(required = true) String symbol) {
+        Gson gson = new Gson();
+        Stocks stocks = new Stocks();
+        List<SingleStock> list = new ArrayList<SingleStock>();
 
+        LocalDate today = new LocalDate();
+        LocalDate firstDay = today.withWeekOfWeekyear(1);
+
+        while(!firstDay.equals(today)) {
+
+            if(firstDay.getDayOfWeek() != 6 && firstDay.getDayOfWeek() != 7) {
+                double low = (Math.random() * ((500.0 - 10.0) + 1)) + 10;
+                low = Math.round(low * 100.0) / 100.0;
+                double high = (Math.random() * ((500 - low) + 1)) + low;
+                high = Math.round(high * 100.0) / 100.0;
+                double open = (Math.random() * ((high - low) + 1)) + low;
+                open = Math.round(open * 100.0) / 100.0;
+                double close = (Math.random() * ((high - low) + 1)) + low;
+                close = Math.round(close * 100.0) / 100.0;
+                Random r = new Random();
+                int volume = r.nextInt((100000 - 0) + 1) + 0;
+                String date = String.valueOf(firstDay);
+
+                SingleStock singleStock = new SingleStock();
+                singleStock.setDate(date);
+                singleStock.setLow(low);
+                singleStock.setHigh(high);
+                singleStock.setClose(close);
+                singleStock.setOpen(open);
+                //  singleStock.setSymbol(symbol);
+                singleStock.setVolume(volume);
+                list.add(singleStock);
+            }
+            firstDay = firstDay.plusDays(1);
+        }
+        stocks.setStocksList(list);
+        JsonElement json = gson.toJsonTree(stocks);
+        return json.toString();
+
+    }
+
+    @GetMapping(value = "/fiveYear/{symbol}", produces = MediaType.APPLICATION_JSON_VALUE)
+    @ResponseBody
+    public String getFiveYear(@RequestParam(required = true) String symbol) {
+        Gson gson = new Gson();
+        Stocks stocks = new Stocks();
+        List<SingleStock> list = new ArrayList<SingleStock>();
+
+        LocalDate today = new LocalDate();
+        LocalDate fiveYear = new LocalDate("2015-01-01");
+
+        while(!fiveYear.equals(today)) {
+
+            if(fiveYear.getDayOfWeek() != 6 && fiveYear.getDayOfWeek() != 7) {
+                double low = (Math.random() * ((500.0 - 10.0) + 1)) + 10;
+                low = Math.round(low * 100.0) / 100.0;
+                double high = (Math.random() * ((500 - low) + 1)) + low;
+                high = Math.round(high * 100.0) / 100.0;
+                double open = (Math.random() * ((high - low) + 1)) + low;
+                open = Math.round(open * 100.0) / 100.0;
+                double close = (Math.random() * ((high - low) + 1)) + low;
+                close = Math.round(close * 100.0) / 100.0;
+                Random r = new Random();
+                int volume = r.nextInt((100000 - 0) + 1) + 0;
+                String date = String.valueOf(fiveYear);
+
+                SingleStock singleStock = new SingleStock();
+                singleStock.setDate(date);
+                singleStock.setLow(low);
+                singleStock.setHigh(high);
+                singleStock.setClose(close);
+                singleStock.setOpen(open);
+                //  singleStock.setSymbol(symbol);
+                singleStock.setVolume(volume);
+                list.add(singleStock);
+            }
+            fiveYear = fiveYear.plusDays(1);
+        }
+        stocks.setStocksList(list);
+        JsonElement json = gson.toJsonTree(stocks);
+        try {
+            FileWriter fileWriter = new FileWriter("output.json");
+            gson.toJson(stocks, fileWriter);
+            fileWriter.flush();
+            fileWriter.close();
+        }catch (Exception e){
+
+        }
+       // return json.toString();
+        return "";
+
+    }
+
+public double currentValue(String symbol){
+        String output = "";
+        double stockValue = 0.0;
+        try {
+            URL url = new URL("https://www.alphavantage.co/query?function=TIME_SERIES_DAILY&symbol="+symbol+"&apikey=YNNNXAMXZNPWGTUD");
+
+            HttpURLConnection con = (HttpURLConnection) url.openConnection();
+            con.setRequestMethod("GET");
+            con.setRequestProperty("Accept", "application/json");
+            con.setDoOutput(true);
+            int code = con.getResponseCode();
+            System.out.println(code);
+            BufferedReader in = new BufferedReader(
+                    new InputStreamReader(con.getInputStream()));
+            String inputLine;
+            StringBuffer content = new StringBuffer();
+            while ((inputLine = in.readLine()) != null) {
+                content.append(inputLine);
+            }
+            in.close();
+            output = content.toString();
+            JsonParser parser = new JsonParser();
+            JsonObject jsonObject = parser.parse(output).getAsJsonObject();
+            LocalDate today = new LocalDate();
+            if(today.getDayOfWeek() == 6)
+                today = today.minusDays(1);
+            else if(today.getDayOfWeek() == 7)
+                today = today.minusDays(2);
+
+            stockValue = jsonObject.get("Time Series (Daily)").getAsJsonObject().get(today.toString()).getAsJsonObject().get("4. close").getAsDouble();
+            //json = jsonObject.toString();
+        }catch (Exception e){
+
+        }
+
+ return stockValue;
+}
 
     public static void main(String[] arg){
 
-          System.out.println(  new StockDataController().getMonthToDate("test"));
+          System.out.println(  new StockDataController().currentValue("AMZN"));
 
     }
 
