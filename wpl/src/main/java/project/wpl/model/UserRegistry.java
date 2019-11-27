@@ -5,7 +5,7 @@ import java.util.Set;
 
 
 @Entity
-@Table(name = "registration", schema = "wpl")
+@Table(name = "registration", schema = "public")
 public class UserRegistry {
 
     @Column(name = "username")

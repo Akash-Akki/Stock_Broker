@@ -4,7 +4,7 @@ import javax.persistence.*;
 import java.util.Set;
 
 @Entity
-@Table(name = "roles", schema = "wpl")
+@Table(name = "roles", schema = "public")
 public class Role {
 
 
