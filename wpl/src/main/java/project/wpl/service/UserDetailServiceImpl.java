@@ -5,7 +5,8 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.*;
-import javax.naming.InsufficientResourcesException;
+import java.util.stream.Collectors;
+import java.util.stream.StreamSupport;
 import javax.validation.Valid;
 
 import com.google.gson.Gson;
@@ -24,13 +25,9 @@ import org.springframework.transaction.annotation.Transactional;
 import project.wpl.exception.InsufficientFundsException;
 import project.wpl.exception.InsufficientStocksException;
 import project.wpl.exception.ResourceNotFoundException;
+import project.wpl.exception.StocksNotFoundException;
 import project.wpl.model.*;
-import project.wpl.repository.BankAccountRepository;
-import project.wpl.repository.CurrentPriceRepository;
-import project.wpl.repository.RegistrationRepository;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import project.wpl.repository.UserShareRepository;
+import project.wpl.repository.*;
 
 @Service
 public class UserDetailServiceImpl implements UserDetailsService {
@@ -43,6 +40,9 @@ public class UserDetailServiceImpl implements UserDetailsService {
 
   @Autowired
   private UserShareRepository userShareRepository;
+
+  @Autowired
+  private StockListRepository stockListRepository;
 
   public void updateUserInformation(@Valid UserRegistry userRegistry, String username) {
     // TODO Auto-generated method stub
@@ -188,6 +188,28 @@ public class UserDetailServiceImpl implements UserDetailsService {
 
     }
 
+    public List<String> listStocks() throws  StocksNotFoundException{
+
+        Iterable<StocksList> allStocks = stockListRepository.findAll();
+        StocksList stocksList=new StocksList();
+        List<StocksList> list=new ArrayList<StocksList>();
+        Gson gson = new Gson();
+        List<String> jsonList=new ArrayList<String>();
+         for(StocksList stocks: allStocks){
+             stocksList.setRegion(stocks.getRegion());
+             stocksList.setCompany_name(stocks.getCompany_name());
+             stocksList.setStock_type(stocks.getStock_type());
+             stocksList.setSymbol(stocks.getSymbol());
+             JsonElement json = gson.toJsonTree(stocksList);
+             jsonList.add(json.toString());
+         }
+         if(jsonList==null) {
+             throw new StocksNotFoundException("No Stocks Found");
+         }
+
+        return jsonList;
+    }
+
     public double currentValue(String symbol){
         String output = "";
         double stockValue = 0.0;
@@ -225,6 +247,7 @@ public class UserDetailServiceImpl implements UserDetailsService {
 
         return stockValue;
     }
+
 
 
 }

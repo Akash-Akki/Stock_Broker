@@ -1,6 +1,8 @@
 package project.wpl.controller;
 
 import java.security.Principal;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -18,12 +20,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import project.wpl.exception.*;
 import project.wpl.model.BankAccount;
 import project.wpl.model.BuyStock;
@@ -171,6 +168,23 @@ public class UserRegistrationController {
     }
     return new ResponseEntity("stock sold succesfully",HttpStatus.ACCEPTED);
   }
+
+
+  @GetMapping(value="/listStocks", produces = MediaType.APPLICATION_JSON_VALUE)
+  public ResponseEntity getStocks()
+  {
+    List<String> jsonString=new ArrayList<String>();
+    try {
+       jsonString = userDetailService.listStocks();
+    }
+    catch(StocksNotFoundException e)
+    {
+         return  new ResponseEntity(e.getMessage(),HttpStatus.FORBIDDEN);
+    }
+
+    return new ResponseEntity(jsonString,HttpStatus.ACCEPTED);
+  }
+
 
   @GetMapping(value="/getUserProfileInfo")
   public ResponseEntity getUserProfileInfo(@RequestParam Map<String,String> params,HttpSession session)
