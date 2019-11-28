@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Shopz</title>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="https://cdn.datatables.net/1.10.20/css/dataTables.bootstrap.min.css">
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+<script src="https://code.jquery.com/jquery-3.3.1.js"></script>
+<script src="https://cdn.datatables.net/1.10.20/js/jquery.dataTables.min.js"></script>
+<script src="https://cdn.datatables.net/1.10.20/js/dataTables.bootstrap.min.js"></script>
+<script>
+$(document).ready(function () {
+$('#dtBasicExample').DataTable();
+$('.dataTables_length').addClass('bs-select');
+});
+</script>
+<style>
+footer {
+  position: fixed;
+  bottom: 0;																	
+  background-color: black;
+  color: grey;
+  width: 97.5%;
+  font-size: 14px;
+  text-align: center;
+}
+</style>
+</script>
+	<style>
+			header {
+			   top: 5px;
+			   position:absolute;
+			   padding:10px;
+			   font: bold 16px italic Arial;
+			}
+
+			footer {
+			   position:absolute;
+			   bottom:0;
+			   width:100%;
+			   height:10%;   
+			   font: bold 16px italic Arial;
+			}
+		.sidenav {
+		  display: inline;
+		  overflow: hidden;
+		  background-color: none;
+		  position: fixed;
+		  top: 0px;
+		  width: 100%;
+		  right: 150px;
+		  margin-bottom: 2.5em;
+		}
+		.sidenav  a {
+		  float: right;
+		  display: block;
+		  color: #000;
+		  text-align: center;
+		  padding: 14px 16px;
+		  text-decoration: none;
+		  font-size: 17px;
+		}
+
+		.sidenav a.active {
+		  background-color: #4CAF50;
+		  color: white;
+		}
+
+		.sidenav a:hover:not(.active) {
+		  background-color: black;
+		  color: white;
+		}
+		th, td {
+		  padding: 15px;
+		  text-align: left;
+		}
+			
+	</style>
+</head>
+<body class="container-fluid">
+<header>
+<img src="images/mycomp1.jpg" alt="Logo"></img>
+</header>
+<div id="firstsec">
+	<nav class="sidenav">
+	<a href="login.html" >Sign in</a>
+	<a href="about.html" >About</a>
+	<a href="stockPage.html" >StockPage</a>
+	<a href="my_profile.html" >My Profile</a>
+	<a href="firstpage.html" >Home</a>
+</div>
+<div style="padding-top:100px;">
+<table id="myinfo" class="table table-hover table-bordered table-sm " cellspacing="0" 
+			 data-toggle="table"
+			 data-search="true"
+			 data-filter-control="true" 
+			 data-show-export="true"
+			 data-click-to-select="true"
+			 data-toolbar="#toolbar"
+       class="table-responsive">
+  <thead>
+    <tr>
+      <th class="th-sm">Name
+      </th>
+	  <th>N1001391375</th>
+	</tr>
+	<tr>
+      <th class="th-sm">Email
+      </th>
+	  <th>dsjcnfkj@gmail.com</th>
+	</tr>
+	<tr>
+      <th class="th-sm">Address
+      </th>
+	  <th>1010 dfvg df df df</th>
+    </tr>
+  </thead>
+  <tbody>
+<table id="dtBasicExample" class="table table-hover table-bordered table-sm " cellspacing="0" width="100%" 
+			 data-toggle="table"
+			 data-search="true"
+			 data-filter-control="true" 
+			 data-show-export="true"
+			 data-click-to-select="true"
+			 data-toolbar="#toolbar"
+       class="table-responsive">
+  <thead>
+    <tr>
+      <th class="th-sm">Order Number
+      </th>
+      <th class="th-sm">Order Description
+      </th>
+      <th class="th-sm">Order Delivery Date
+      </th>
+      <th class="th-sm">Order Total Price
+      </th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>N1001391375</td>
+      <td>Diwali 2010</td>
+      <td>10/10/2010</td>
+      <td>250 USD</td>
+    </tr>
+	<tr>
+      <td>N1001391376</td>
+      <td>Diwali 2011</td>
+      <td>10/10/2011</td>
+      <td>350 USD</td>
+    </tr>
+
+  </tbody>
+ </table>
+</body>
+</html>
+
