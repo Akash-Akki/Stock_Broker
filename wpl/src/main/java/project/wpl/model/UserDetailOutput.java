@@ -1,13 +1,8 @@
 package project.wpl.model;
 
-import javax.persistence.Column;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-
 public class UserDetailOutput {
 
-    private String username;
+    private String company_name;
     private String symbol;
     private int quantity;
     private double netWorth;
@@ -37,11 +32,11 @@ public class UserDetailOutput {
         this.symbol = symbol;
     }
 
-    public String getUsername() {
-        return username;
+    public String getCompany_name() {
+        return company_name;
     }
 
-    public void setUsername(String username) {
-        this.username = username;
+    public void setCompany_name(String company_name) {
+        this.company_name = company_name;
     }
 }

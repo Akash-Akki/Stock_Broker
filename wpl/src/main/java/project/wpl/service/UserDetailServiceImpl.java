@@ -5,8 +5,6 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.*;
-import java.util.stream.Collectors;
-import java.util.stream.StreamSupport;
 import javax.validation.Valid;
 
 import com.google.gson.Gson;
@@ -177,7 +175,7 @@ public class UserDetailServiceImpl implements UserDetailsService {
               totalStockPrice =stockPrice*byUsername.get(i).getQuantity();
               userDetailOutput.setNetWorth(totalStockPrice);
               userDetailOutput.setQuantity(byUsername.get(i).getQuantity());
-              userDetailOutput.setUsername(username);
+              userDetailOutput.setCompany_name(byUsername.get(i).getCompany());
               userDetailOutput.setSymbol(symbol);
               //System.out.println("total Stock price " +userDetailOutput.getNetWorth());
         }

@@ -145,10 +145,7 @@ public class UserRegistrationController {
   public ResponseEntity buyStock(@Valid @RequestBody BuyStock buyStock,@RequestParam Map<String,String> params,HttpSession session)
   {
     String username = (String) session.getAttribute("username");
-
      userDetailService.stockBuy(buyStock,username);
-
-
      return new ResponseEntity("stock bought succesfully",HttpStatus.ACCEPTED);
   }
 
