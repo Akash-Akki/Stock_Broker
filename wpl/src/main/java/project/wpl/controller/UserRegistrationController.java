@@ -148,12 +148,10 @@ public class UserRegistrationController {
   public ResponseEntity buyStock(@Valid @RequestBody BuyStock buyStock,@RequestParam Map<String,String> params,HttpSession session)
   {
     String username = (String) session.getAttribute("username");
-   try {
+
      userDetailService.stockBuy(buyStock,username);
-   }
-   catch(InsufficientFundsException e){
-     return new ResponseEntity(e.getMessage(),HttpStatus.FORBIDDEN);
-   }
+
+
      return new ResponseEntity("stock bought succesfully",HttpStatus.ACCEPTED);
   }
 
@@ -174,6 +172,25 @@ public class UserRegistrationController {
     return new ResponseEntity("stock sold succesfully",HttpStatus.ACCEPTED);
   }
 
+  @GetMapping(value="/getUserProfileInfo")
+  public ResponseEntity getUserProfileInfo(@RequestParam Map<String,String> params,HttpSession session)
+  {
+    String username = (String) session.getAttribute("username");
+    String json="";
+    try {
+      if (username == null) {
+        throw new SessionNotFoundException("User Not logged in");
+      }
+    } catch (SessionNotFoundException e) {
+      return new ResponseEntity(e.getMessage(), HttpStatus.FORBIDDEN);
+    }
+    json=userDetailService.getProfileInfo(username);
+    return new ResponseEntity(json,HttpStatus.ACCEPTED);
+  }
+
+
+
+
   @PostMapping(value = "/forgotPassword", consumes = MediaType.APPLICATION_JSON_VALUE,
       produces = MediaType.APPLICATION_JSON_VALUE)
   public ResponseEntity forgotPassword(@Valid @RequestBody UserRegistry userRegistry,
@@ -189,6 +206,9 @@ public class UserRegistrationController {
     userRegistryServiceImpl.passwordReset(userRegistry);
     return new ResponseEntity("reset password sucess", HttpStatus.OK);
   }
+
+
+
 
   @PostMapping("/login")
   public String login(@Valid @RequestBody UserRegistry userRegistry, HttpServletRequest request,

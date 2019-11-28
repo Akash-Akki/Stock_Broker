@@ -1,8 +1,6 @@
 package project.wpl.service;
 
-import java.util.Base64;
-import java.util.HashSet;
-import java.util.Optional;
+import java.util.*;
 import javax.validation.Valid;
 import org.json.simple.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,9 +11,11 @@ import project.wpl.exception.InputValidationException;
 import project.wpl.exception.ResourceNotFoundException;
 import project.wpl.model.BankAccount;
 import project.wpl.model.UserRegistry;
+import project.wpl.model.UserShare;
 import project.wpl.repository.BankAccountRepository;
 import project.wpl.repository.RegistrationRepository;
 import project.wpl.repository.RoleRepository;
+import project.wpl.repository.UserShareRepository;
 
 @Service
 public class UserRegistryServiceImpl {
@@ -33,8 +33,12 @@ public class UserRegistryServiceImpl {
   @Autowired
   private RoleRepository roleRepository;
 
+  @Autowired
+  private UserShareRepository userShareRepository;
+
   public void createNewUser(@Valid UserRegistry userRegistry) {
     validate(userRegistry);
+    System.out.println("in service");
     userRegistry.setPasswd(bCryptPasswordEncoder.encode(userRegistry.getPasswd()));
     userRegistry.setRoles(new HashSet<>(roleRepository.findAll()));
     System.out.println("Saving user");

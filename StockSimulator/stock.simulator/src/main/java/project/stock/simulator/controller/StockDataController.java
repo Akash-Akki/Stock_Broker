@@ -9,10 +9,7 @@ import org.joda.time.DateTime;
 import org.joda.time.DateTimeConstants;
 import org.joda.time.LocalDate;
 import org.springframework.http.MediaType;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import project.stock.simulator.model.SingleStock;
 import project.stock.simulator.model.Stocks;
 
@@ -29,7 +26,7 @@ public class StockDataController {
 
     @GetMapping(value = "/pastWeek/{symbol}", produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
-    public String getPastWeekData(@RequestParam(required = true) String symbol)  {
+    public String getPastWeekData(@PathVariable("symbol")  String symbol)  {
         int count = 1;
         Stocks stocks = new Stocks();
         List<SingleStock> list = new ArrayList<SingleStock>();
@@ -78,7 +75,7 @@ public class StockDataController {
     }
     @GetMapping(value = "/currentWeek/{symbol}", produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
-    public String getCurrentWeekData(@RequestParam(required = true) String symbol)  {
+    public String getCurrentWeekData(@PathVariable("symbol")  String symbol)  {
         Gson gson = new Gson();
         LocalDate now = new LocalDate();
         LocalDate prev = now.withDayOfWeek(DateTimeConstants.MONDAY);
@@ -126,7 +123,7 @@ public class StockDataController {
 
     @GetMapping(value = "/currentDay/{symbol}", produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
-    public String getCurrentDay(@RequestParam(required = true) String symbol)  {
+    public String getCurrentDay(@PathVariable("symbol")  String symbol)  {
         Gson gson = new Gson();
         Stocks stocks = new Stocks();
         List<SingleStock> list = new ArrayList<SingleStock>();
@@ -171,7 +168,7 @@ public class StockDataController {
 
     @GetMapping(value = "/monthToDate/{symbol}", produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
-    public String getMonthToDate(@RequestParam(required = true) String symbol) {
+    public String getMonthToDate(@PathVariable("symbol")  String symbol) {
         Gson gson = new Gson();
         Stocks stocks = new Stocks();
         List<SingleStock> list = new ArrayList<SingleStock>();
@@ -212,7 +209,7 @@ public class StockDataController {
 
     @GetMapping(value = "/yearToDate/{symbol}", produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
-    public String getYearToDate(@RequestParam(required = true) String symbol) {
+    public String getYearToDate(@PathVariable("symbol")  String symbol) {
         Gson gson = new Gson();
         Stocks stocks = new Stocks();
         List<SingleStock> list = new ArrayList<SingleStock>();
@@ -255,7 +252,7 @@ public class StockDataController {
 
     @GetMapping(value = "/fiveYear/{symbol}", produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
-    public String getFiveYear(@RequestParam(required = true) String symbol) {
+    public String getFiveYear(@PathVariable("symbol") String symbol) {
         Gson gson = new Gson();
         Stocks stocks = new Stocks();
         List<SingleStock> list = new ArrayList<SingleStock>();
@@ -292,22 +289,17 @@ public class StockDataController {
         }
         stocks.setStocksList(list);
         JsonElement json = gson.toJsonTree(stocks);
-        try {
-            FileWriter fileWriter = new FileWriter("output.json");
-            gson.toJson(stocks, fileWriter);
-            fileWriter.flush();
-            fileWriter.close();
-        }catch (Exception e){
 
-        }
-       // return json.toString();
-        return "";
+        return json.toString();
+
 
     }
-
-public double currentValue(String symbol){
+@GetMapping(value = "/currentValue/{symbol}", produces = MediaType.APPLICATION_JSON_VALUE)
+@ResponseBody
+public double currentValue(@PathVariable("symbol") String symbol){
         String output = "";
         double stockValue = 0.0;
+        //System.out.println("in Second server" );
         try {
             URL url = new URL("https://www.alphavantage.co/query?function=TIME_SERIES_DAILY&symbol="+symbol+"&apikey=YNNNXAMXZNPWGTUD");
 
@@ -339,14 +331,13 @@ public double currentValue(String symbol){
         }catch (Exception e){
 
         }
-
  return stockValue;
 }
 
-    public static void main(String[] arg){
+  /*  public static void main(String[] arg){
 
           System.out.println(  new StockDataController().currentValue("AMZN"));
 
-    }
+    }*/
 
 }

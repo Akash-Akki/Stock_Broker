@@ -20,28 +20,32 @@ public class UserValidator implements Validator {
 
     @Override
     public void validate(Object o, Errors errors) {
-        System.out.println("Validating");
+        //System.out.println("Validating");
         UserRegistry user = (UserRegistry) o;
-
+       // System.out.println("after");
         ValidationUtils.rejectIfEmptyOrWhitespace(errors, "username", "NotEmpty");
         if (user.getUsername().length() < 6 || user.getUsername().length() > 32) {
             errors.rejectValue("username","Size.userForm.username");
            // errors.rejectValue("errorcode", "Size.userForm.username");
+            //System.out.println("in username");
             return;
         }
         if (registrationRepository.findByUsername(user.getUsername()) != null) {
             errors.rejectValue( "username","Duplicate.userForm.username");
+            //System.out.println("in username2");
             return;
         }
 
         ValidationUtils.rejectIfEmptyOrWhitespace(errors, "passwd", "NotEmpty");
         if (user.getPasswd().length() < 8 || user.getPasswd().length() > 32) {
             errors.rejectValue("passwd","Size.userForm.password");
+            //System.out.println("in passwd");
             return;
         }
 
         if (!user.getPasswordConfirm().equals(user.getPasswd())) {
             errors.reject( "passwordConfirm","Diff.userForm.passwordConfirm");
+           // System.out.println("in passwd2");
             return;
         }
     }

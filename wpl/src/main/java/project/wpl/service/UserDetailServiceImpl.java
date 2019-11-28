@@ -1,10 +1,18 @@
 package project.wpl.service;
 
-import java.util.HashSet;
-import java.util.Optional;
-import java.util.Set;
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
+import java.net.URL;
+import java.util.*;
 import javax.naming.InsufficientResourcesException;
 import javax.validation.Valid;
+
+import com.google.gson.Gson;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
+import org.joda.time.LocalDate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -32,9 +40,6 @@ public class UserDetailServiceImpl implements UserDetailsService {
 
   @Autowired
   private RegistrationRepository registrationRepository;
-
-  @Autowired
-  private CurrentPriceRepository currentPriceRepository;
 
   @Autowired
   private UserShareRepository userShareRepository;
@@ -101,33 +106,22 @@ public class UserDetailServiceImpl implements UserDetailsService {
 
     @Transactional
     public void stockBuy(BuyStock buyStock,String username) throws InsufficientFundsException{
-        int accountNumber= buyStock.getAccountNumber();
-        Optional<CurrentPrice> findByCurrentPrice = currentPriceRepository.findById(buyStock.getSymbol());
-        double stockPrice=findByCurrentPrice.get().getPrice();
-        double totalPrice = buyStock.getNumberOfUnits()*stockPrice;
-        Optional<BankAccount> findByAccountNumber = bankAccountRepository.findById(accountNumber);
-        double currentAccountBalance=findByAccountNumber.get().getBalance();
-
-          if(currentAccountBalance-totalPrice<0)
-               throw new InsufficientFundsException("Insufficent funds");
-        double updateBalance=currentAccountBalance-totalPrice;
-        findByAccountNumber.get().setBalance(updateBalance);
+        Optional<BankAccount> findByAccountNumber = bankAccountRepository.findById(buyStock.getAccountNumber());
+        double updatedBalance=accountBalanceUpdate(buyStock,findByAccountNumber,"buy");
+        if(updatedBalance<0)
+            throw new InsufficientFundsException("Insufficent funds");
+        findByAccountNumber.get().setBalance(updatedBalance);
         bankAccountRepository.save(findByAccountNumber.get());
-
        UserShare findUserShareBySymbol = userShareRepository.findBySymbol(buyStock.getSymbol());
-      System.out.println("share symbol"+findUserShareBySymbol);
-       UserShare userShare =new UserShare();
+       UserShare userShare=new UserShare();
        if(findUserShareBySymbol != null)
        {
-                     // System.out.println("result is "+findUserShareBySymbol.toString());
                       int quantity=findUserShareBySymbol.getQuantity();
                       int updatedQuantity= quantity+buyStock.getNumberOfUnits();
                       findUserShareBySymbol.setQuantity(updatedQuantity);
                       userShareRepository.save(findUserShareBySymbol);
        }
        else{
-                     System.out.println("find By Symbol is "+ buyStock.getSymbol());
-                     //String symbol=buyStock.getSymbol();
                      userShare.setSymbol(buyStock.getSymbol());
                      userShare.setUsername(username);
                      userShare.setQuantity(buyStock.getNumberOfUnits());
@@ -138,22 +132,99 @@ public class UserDetailServiceImpl implements UserDetailsService {
     }
 
     public void stockSell(BuyStock buyStock, String username) throws InsufficientStocksException {
-      int accountNumber= buyStock.getAccountNumber();
-        Optional<CurrentPrice> findByCurrentPrice = currentPriceRepository.findById(buyStock.getSymbol());
-        double stockPrice=findByCurrentPrice.get().getPrice();
-        double totalPrice = buyStock.getNumberOfUnits()*stockPrice;
-        Optional<BankAccount> findByAccountNumber = bankAccountRepository.findById(accountNumber);
-        double currentAccountBalance=findByAccountNumber.get().getBalance();
-
-        double updateBalance=currentAccountBalance+totalPrice;
-        findByAccountNumber.get().setBalance(updateBalance);
+        Optional<BankAccount> findByAccountNumber = bankAccountRepository.findById(buyStock.getAccountNumber());
+        double updatedBalance=accountBalanceUpdate(buyStock,findByAccountNumber,"sell");
+       findByAccountNumber.get().setBalance(updatedBalance);
         bankAccountRepository.save(findByAccountNumber.get());
         UserShare findUserShareBySymbol = userShareRepository.findBySymbol(buyStock.getSymbol());
         int quantity=findUserShareBySymbol.getQuantity();
-           if(buyStock.getNumberOfUnits()>quantity)
-               throw new InsufficientStocksException("Insufficent stocks");
+        if(buyStock.getNumberOfUnits()>quantity)
+            throw new InsufficientStocksException("Insufficent stocks");
         int updatedQuantity= quantity-buyStock.getNumberOfUnits();
         findUserShareBySymbol.setQuantity(updatedQuantity);
         userShareRepository.save(findUserShareBySymbol);
     }
+
+
+
+
+    private double accountBalanceUpdate(BuyStock buyStock, Optional<BankAccount> findByAccountNumber, String func) {
+        int accountNumber= buyStock.getAccountNumber();
+        //Optional<CurrentPrice> findByCurrentPrice = currentPriceRepository.findById(buyStock.getSymbol());
+       double stockPrice=currentValue(buyStock.getSymbol());
+        double totalPrice = buyStock.getNumberOfUnits()*stockPrice;
+        double currentAccountBalance=findByAccountNumber.get().getBalance();
+        double updateBalance=0.0;
+        if(func.equals("buy"))
+           updateBalance=currentAccountBalance-totalPrice;
+        else if(func.equals("sell"))
+            updateBalance=currentAccountBalance+totalPrice;
+        System.out.println("updated Balance"+updateBalance);
+        return updateBalance;
+    }
+
+    public String getProfileInfo(String username) {
+        List<UserShare> byUsername = userShareRepository.findByUsername(username);
+        List<String> symbolList =new ArrayList<String>();
+        double stockPrice=0.0;
+        double totalStockPrice=0.0;
+        UserDetailOutput userDetailOutput = new UserDetailOutput();
+        Gson gson = new Gson();
+        for(int i=0;i<byUsername.size();i++)
+        {
+              String symbol = byUsername.get(i).getSymbol();
+              stockPrice=currentValue(symbol);
+              totalStockPrice =stockPrice*byUsername.get(i).getQuantity();
+              userDetailOutput.setNetWorth(totalStockPrice);
+              userDetailOutput.setQuantity(byUsername.get(i).getQuantity());
+              userDetailOutput.setUsername(username);
+              userDetailOutput.setSymbol(symbol);
+              //System.out.println("total Stock price " +userDetailOutput.getNetWorth());
+        }
+        JsonElement json = gson.toJsonTree(userDetailOutput);
+        System.out.println("json is "+json.toString());
+        return json.toString();
+
+
+    }
+
+    public double currentValue(String symbol){
+        String output = "";
+        double stockValue = 0.0;
+        try {
+            URL url = new URL("https://www.alphavantage.co/query?function=TIME_SERIES_DAILY&symbol="+symbol+"&apikey=YNNNXAMXZNPWGTUD");
+
+            HttpURLConnection con = (HttpURLConnection) url.openConnection();
+            con.setRequestMethod("GET");
+            con.setRequestProperty("Accept", "application/json");
+            con.setDoOutput(true);
+            int code = con.getResponseCode();
+            System.out.println(code);
+            BufferedReader in = new BufferedReader(
+                    new InputStreamReader(con.getInputStream()));
+            String inputLine;
+            StringBuffer content = new StringBuffer();
+            while ((inputLine = in.readLine()) != null) {
+                content.append(inputLine);
+            }
+            in.close();
+            output = content.toString();
+            JsonParser parser = new JsonParser();
+            JsonObject jsonObject = parser.parse(output).getAsJsonObject();
+            LocalDate today = new LocalDate();
+            if(today.getDayOfWeek() == 6)
+                today = today.minusDays(1);
+            else if(today.getDayOfWeek() == 7)
+                today = today.minusDays(2);
+
+            stockValue = jsonObject.get("Time Series (Daily)").getAsJsonObject().get(today.toString()).getAsJsonObject().get("4. close").getAsDouble();
+            //json = jsonObject.toString();
+        }catch (Exception e){
+
+        }
+
+        return stockValue;
+    }
+
+
 }
