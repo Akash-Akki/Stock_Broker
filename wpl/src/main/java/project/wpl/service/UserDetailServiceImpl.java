@@ -171,6 +171,8 @@ public class UserDetailServiceImpl implements UserDetailsService {
         for(int i=0;i<byUsername.size();i++)
         {
               String symbol = byUsername.get(i).getSymbol();
+              //change this code to call from another sever using rest-template
+
               stockPrice=currentValue(symbol);
               totalStockPrice =stockPrice*byUsername.get(i).getQuantity();
               userDetailOutput.setNetWorth(totalStockPrice);
