@@ -60,7 +60,7 @@
 	 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
     <script>
 $(document).ready(function(){
-        $("forgotpassword-form").submit(function( event ) {
+        $("resetform").submit(function( event ) {
   var formArray =  $( this ).serializeArray() ;
   event.preventDefault();
   var returnArray = {};
@@ -77,10 +77,10 @@ $(document).ready(function(){
     xhttp.onreadystatechange = function() {
          if (this.readyState == 4 && this.status == 200) {
              console.log(this.responseText);
-			 window.location.href='reset.html';
+			 window.location.href='login.html';
          }
     };
-    xhttp.open("POST", "http://localhost:9090/forgotPassword", true);
+    xhttp.open("POST", "http://localhost:9090/resetPassword", true);
     xhttp.setRequestHeader("Content-type", "application/json");
     xhttp.send(finalArray);
 
@@ -113,29 +113,23 @@ $(document).ready(function(){
 
                 <div class="signin-form">
                     <h2 class="form-title">Forgot Password</h2>
-                    <form method="POST" class="forgotpassword-form" id="forgotpassword-form">
+						<form method="POST" class="reset-form" id="resetform">
 						<div class="form-group">
                             <label for="your_name"><i class="zmdi zmdi-account material-icons-name"></i></label>
                             <input type="text" name="username" id="your_name" placeholder="Your Name"/>
                         </div>
                         <div class="form-group">
-                            <label class="label-agree-term"><i class="zmdi zmdi-lock"></i> &nbsp; <span><span></span></span>Security Question</label>
-                            <select name="security_qn">
-                                <option value="What is your mother's maiden name?">What is your mother's maiden name?</option>
-                                <option value="What is your first pet's name?">What is your first pet's name?</option>
-                                <option value="What is your favorite game?">What is your favorite game?</option>
-                                <option value="What is your dad's favorite game?">What is your dad's favorite game?</option>
-                                <option value="What is your dream job?">What is your dream job?</option>
-                            </select>
-                            <div class="form-group">
-                                <label for="pass"><i class="zmdi zmdi-lock"></i></label>
-                                <input type="text" name="security_qn_ans" id="securityans" placeholder="Your Security Answer"/>
-                            </div>
+                            <label for="pass"><i class="zmdi zmdi-lock"></i></label>
+                            <input type="password" name="passwd" id="pass" placeholder="Password"/>
                         </div>
-						<div class="form-group form-button">
-                            <input type="submit" name="verify" id="verify" class="form-login" value="verify"/>
+                        <div class="form-group">
+                            <label for="pass"><i class="zmdi zmdi-lock-outline"></i></label>
+                            <input type="password" name="passwordConfirm" id="re_pass" placeholder="Repeat your password"/>
                         </div>
-						</form>
+                        <div class="form-group form-button">
+                            <input type="submit" name="reset" id="Login" class="form-login" value="Reset"/>
+                        </div>
+                    </form>
                 </div>
             </div>
         </div>
