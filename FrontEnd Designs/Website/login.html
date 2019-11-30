@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
+     <meta http-equiv="refresh" content="1000; url=my_profile.html"/>-->
     <title> FULLSTACKROVERS SignIn</title>
 
     <!-- Font Icon -->
@@ -57,6 +58,40 @@
 		}
 			
 	</style>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+<script>
+
+    $(document).ready(function(){
+        $("form").submit(function( event ) {
+  var formArray =  $( this ).serializeArray() ;
+  event.preventDefault();
+  var returnArray = {};
+  var finalArray = {};
+  console.log(formArray);
+  for (var i = 0; i < formArray.length; i++){
+    returnArray[formArray[i]['name']] = formArray[i]['value'];
+  }
+  finalArray = JSON.stringify(returnArray);
+  console.log(finalArray);
+
+
+    var xhttp = new XMLHttpRequest();
+    xhttp.onreadystatechange = function() {
+         if (this.readyState == 4 && this.status == 202) {
+         console.log("login succesfully");
+           //$(location).attr('href', 'my_profile.html')
+            window.location.href='my_profile.html';
+         }
+    };
+    xhttp.open("POST", "https://localhost:9090/login", true);
+    xhttp.setRequestHeader("Content-type", "application/json");
+    xhttp.send(finalArray);
+
+  });
+});
+
+
+</script>
 </head>
 <body>
 <header>
@@ -88,11 +123,11 @@
                     <form method="POST" class="register-form" id="login-form">
                         <div class="form-group">
                             <label for="your_name"><i class="zmdi zmdi-account material-icons-name"></i></label>
-                            <input type="text" name="your_name" id="your_name" placeholder="Your Name"/>
+                            <input type="text" name="username" id="your_name" placeholder="Your Name"/>
                         </div>
                         <div class="form-group">
                             <label for="your_pass"><i class="zmdi zmdi-lock"></i></label>
-                            <input type="password" name="your_pass" id="your_pass" placeholder="Password"/>
+                            <input type="password" name="passwd" id="your_pass" placeholder="Password"/>
                         </div>
                         <div class="form-group form-button">
                             <input type="submit" name="signin" id="signin" class="form-submit" value="Log in"/>
