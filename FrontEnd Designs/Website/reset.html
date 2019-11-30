@@ -60,7 +60,7 @@
 	 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
     <script>
 $(document).ready(function(){
-        $("resetform").submit(function( event ) {
+        $("form").submit(function( event ) {
   var formArray =  $( this ).serializeArray() ;
   event.preventDefault();
   var returnArray = {};
@@ -80,7 +80,7 @@ $(document).ready(function(){
 			 window.location.href='login.html';
          }
     };
-    xhttp.open("POST", "http://localhost:9090/resetPassword", true);
+    xhttp.open("PUT", "https://localhost:9090/resetPassword", true);
     xhttp.setRequestHeader("Content-type", "application/json");
     xhttp.send(finalArray);
 
