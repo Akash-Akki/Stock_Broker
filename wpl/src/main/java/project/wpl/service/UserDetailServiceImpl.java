@@ -1,14 +1,16 @@
 package project.wpl.service;
 
 import java.io.BufferedReader;
+import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.*;
 import javax.validation.Valid;
 
-import com.google.gson.Gson;
-import com.google.gson.JsonElement;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import org.joda.time.LocalDate;
@@ -161,13 +163,13 @@ public class UserDetailServiceImpl implements UserDetailsService {
         return updateBalance;
     }
 
-    public String getProfileInfo(String username) {
+    public String getProfileInfo(String username) throws JsonProcessingException {
         List<UserShare> byUsername = userShareRepository.findByUsername(username);
         List<String> symbolList =new ArrayList<String>();
         double stockPrice=0.0;
         double totalStockPrice=0.0;
         UserDetailOutput userDetailOutput = new UserDetailOutput();
-        Gson gson = new Gson();
+       // Gson gson = new Gson();
         for(int i=0;i<byUsername.size();i++)
         {
               String symbol = byUsername.get(i).getSymbol();
@@ -181,27 +183,43 @@ public class UserDetailServiceImpl implements UserDetailsService {
               userDetailOutput.setSymbol(symbol);
               //System.out.println("total Stock price " +userDetailOutput.getNetWorth());
         }
-        JsonElement json = gson.toJsonTree(userDetailOutput);
-        System.out.println("json is "+json.toString());
-        return json.toString();
+        ObjectMapper objectMapper = new ObjectMapper();
+        String userDetailOutputAsJsonString = objectMapper.writeValueAsString(userDetailOutput);
+        //sonElement json = gson.toJsonTree(userDetailOutput);
+       // System.out.println("json is "+json.toString());
+        //return json.toString();
 
+        return userDetailOutputAsJsonString;
 
     }
 
-    public List<String> listStocks() throws  StocksNotFoundException{
+    public List<JsonNode> listStocks() throws StocksNotFoundException, IOException {
 
         Iterable<StocksList> allStocks = stockListRepository.findAll();
         StocksList stocksList=new StocksList();
         List<StocksList> list=new ArrayList<StocksList>();
-        Gson gson = new Gson();
-        List<String> jsonList=new ArrayList<String>();
+        ObjectMapper objectMapper = new ObjectMapper();
+
+        //Gson gson = new Gson();
+         List<JsonNode> jsonList=new ArrayList<JsonNode>();
          for(StocksList stocks: allStocks){
              stocksList.setRegion(stocks.getRegion());
              stocksList.setCompany_name(stocks.getCompany_name());
              stocksList.setStock_type(stocks.getStock_type());
              stocksList.setSymbol(stocks.getSymbol());
-             JsonElement json = gson.toJsonTree(stocksList);
-             jsonList.add(json.toString());
+
+
+             String stocksListJsonString = objectMapper.writeValueAsString(stocksList);
+             JsonNode jsonNode = objectMapper.readTree(stocksListJsonString);
+             jsonList.add(jsonNode);
+
+             //    JsonElement json = gson.toJsonTree(stocksList);
+           //  JsonObject convertedObject = new Gson().fromJson(json.toString(), JsonObject.class);
+          //   System.out.println("converted object "+ convertedObject);
+              // jsonList.add(convertedObject);
+             //jsonList.add(json.toString());
+
+
          }
          if(jsonList==null) {
              throw new StocksNotFoundException("No Stocks Found");

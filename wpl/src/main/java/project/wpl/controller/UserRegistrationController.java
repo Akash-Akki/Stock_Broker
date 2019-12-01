@@ -1,5 +1,6 @@
 package project.wpl.controller;
 
+import java.io.IOException;
 import java.security.Principal;
 import java.util.ArrayList;
 import java.util.List;
@@ -8,6 +9,9 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
+
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonNode;
 import org.json.simple.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -168,24 +172,26 @@ public class UserRegistrationController {
 
 
   @GetMapping(value="/listStocks", produces = MediaType.APPLICATION_JSON_VALUE)
-  public ResponseEntity getStocks()
+  public ResponseEntity<List<JsonNode>> getStocks()
   {
-    List<String> jsonString=new ArrayList<String>();
+    List<JsonNode> jsonString= new ArrayList<>();
+
     try {
        jsonString = userDetailService.listStocks();
+//       for(int i=0;i<jsonString.size();i++)
+//          System.out.println("json String is "+ jsonString.get(i));
     }
-    catch(StocksNotFoundException e)
+    catch(StocksNotFoundException | IOException e)
     {
          return  new ResponseEntity(e.getMessage(),HttpStatus.FORBIDDEN);
     }
-
-    return new ResponseEntity(jsonString,HttpStatus.ACCEPTED);
+    System.out.println("list stock");
+    return new ResponseEntity<List<JsonNode>>(jsonString,HttpStatus.ACCEPTED);
   }
 
 
   @GetMapping(value="/getUserProfileInfo")
-  public ResponseEntity getUserProfileInfo(@RequestParam Map<String,String> params,HttpSession session)
-  {
+  public ResponseEntity getUserProfileInfo(@RequestParam Map<String,String> params,HttpSession session) throws JsonProcessingException {
     String username = (String) session.getAttribute("username");
     String json="";
     try {
@@ -206,6 +212,7 @@ public class UserRegistrationController {
       produces = MediaType.APPLICATION_JSON_VALUE)
   public ResponseEntity forgotPassword(@Valid @RequestBody UserRegistry userRegistry,
       @RequestParam Map<String, String> params) throws Exception {
+    System.out.println("in forgot Password");
     JSONObject entities = userRegistryServiceImpl.validateSecurityQuestion(userRegistry);
     return new ResponseEntity<Object>(entities, HttpStatus.OK);
   }
@@ -222,8 +229,8 @@ public class UserRegistrationController {
 
 
   @PostMapping("/login")
-  public String login(@Valid @RequestBody UserRegistry userRegistry, HttpServletRequest request,
-      Principal principal) {
+  public ResponseEntity login(@Valid @RequestBody UserRegistry userRegistry, HttpServletRequest request,
+                              Principal principal) {
     System.out.println("logging in");
     // System.out.println("principal user " + principal.getName());
     UserDetails userDetails = userDetailsService.loadUserByUsername(userRegistry.getUsername());
@@ -241,9 +248,9 @@ public class UserRegistrationController {
       SecurityContextHolder.getContext().setAuthentication(usernamePasswordAuthenticationToken);
       System.out.println(String.format("Auto login %s successfully!", userRegistry.getUsername()));
     } else
-      return "Username or password invalid";
+      return new ResponseEntity("username or password invalid",HttpStatus.FORBIDDEN);
+    return new ResponseEntity("login",HttpStatus.ACCEPTED);
 
-    return "login";
   }
 
 
