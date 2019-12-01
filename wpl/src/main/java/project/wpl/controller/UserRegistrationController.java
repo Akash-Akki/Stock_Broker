@@ -264,8 +264,7 @@ public class UserRegistrationController {
   }
 
   @GetMapping({"/", "/welcome"})
-  public String welcome(Model model, Principal principal) {
-    System.out.println(principal.getName());
+  public String welcome() {
     return "welcome";
   }
 
