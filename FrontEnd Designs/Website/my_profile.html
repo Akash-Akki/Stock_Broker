@@ -61,7 +61,7 @@ $('.dataTables_length').addClass('bs-select');
 	</style>
 	<script>
 	function sell() {
-	  var qnty = prompt("Enter stock quantity");
+	  var qntytosell = prompt("Enter stock quantity to sell");
 	  if (qnty != null) {
 		document.getElementById("demo").innerHTML =
 		"Hello " + person + "! How are you today?";
@@ -88,16 +88,32 @@ $('.dataTables_length').addClass('bs-select');
 				tbl.appendChild(tblBody);
 				body.appendChild(tbl);
 		   }
-		   function quantitychk(o)
+		   function quantitychkbuy(o)
 			   {
-					//var p=o.parentNode.parentNode;
-					// p.parentNode.removeChild(p);
-					var qnty = prompt("Enter stock quantity");
-		  if (qnty != null) {
-			document.getElementById("demo").innerHTML =
-			"Hello " + person + "! How are you today?";
-		  }
+					var qntytobuy = prompt("Enter stock quantity to buy");
+					var p = o.parentNode.parentNode;
+					var symbol = p.firstChild.innerHTML;
+					var xhttp = new XMLHttpRequest();
+					xhttp.onreadystatechange = function() {
+						 if (this.readyState == 4 && this.status == 200) {
+							 console.log(this.responseText);
+							}
+						};
+					xhttp.open("POST", "https://localhost:9090/buy", true);
+					xhttp.setRequestHeader("Content-type", "application/json");
+					xhttp.send(finalArray);
 			   }
+			function primaryacc()
+			{
+				var x = document.getElementById("bankinfotab").rows.length;
+				for(var i=0; i<x; i++)
+				{
+				   var cell1 = document.createElement("<option>");
+				   var z = document.getElementById("table").rows[x].cells;
+				   console.log("ho"+z[1].innerHTML);
+				   cell1.innerHTML = "z[1].innerHTML";
+				}
+		    }
 
         var el_up = document.getElementById("GFG_UP"); 
           
@@ -107,603 +123,7 @@ $('.dataTables_length').addClass('bs-select');
     "company_name": "Postal Realty Trust Inc.",
     "stock_type": "Equity",
     "region": "United States"
-  },
-  {
-    "symbol": "PRMI",
-    "company_name": "Priam Properties Inc.",
-    "stock_type": "Equity",
-    "region": "United States"
-  },
-  {
-    "symbol": "PGNY",
-    "company_name": "Progyny Inc.",
-    "stock_type": "Equity",
-    "region": "United States"
-  },
-  {
-    "symbol": "PRNB",
-    "company_name": "Principia Biopharma Inc.",
-    "stock_type": "Equity",
-    "region": "United States"
-  },
-  {
-    "symbol": "PHAT",
-    "company_name": "Phathom Pharmaceuticals Inc.",
-    "stock_type": "Equity",
-    "region": "United States"
-  },
-  {
-    "symbol": "PM",
-    "company_name": "Philip Morris International Inc.",
-    "stock_type": "Equity",
-    "region": "United States"
-  },
-  {
-    "symbol": "PLUG",
-    "company_name": "Plug Power Inc.",
-    "stock_type": "Equity",
-    "region": "United States"
-  },
-  {
-    "symbol": "PFE",
-    "company_name": "Pfizer Inc.",
-    "stock_type": "Equity",
-    "region": "United States"
-  },
-  {
-    "symbol": "PCG",
-    "company_name": "PG&E Corporation",
-    "stock_type": "Equity",
-    "region": "United States"
-  },
-  {
-    "symbol": "A",
-    "company_name": "Agilent Technologies Inc.",
-    "stock_type": "Equity",
-    "region": "United States"
-  },
-  {
-    "symbol": "AMRN",
-    "company_name": "Amarin Corporation plc",
-    "stock_type": "Equity",
-    "region": "United States"
-  },
-  {
-    "symbol": "ACB",
-    "company_name": "Aurora Cannabis Inc.",
-    "stock_type": "Equity",
-    "region": "United States"
-  },
-  {
-    "symbol": "AAPL",
-    "company_name": "Apple Inc.",
-    "stock_type": "Equity",
-    "region": "United States"
-  },
-  {
-    "symbol": "BABA",
-    "company_name": "Alibaba Group Holding Limited",
-    "stock_type": "Equity",
-    "region": "United States"
-  },
-  {
-    "symbol": "AMZN",
-    "company_name": "Amazon.com Inc.",
-    "stock_type": "Equity",
-    "region": "United States"
-  },
-  {
-    "symbol": "AMD",
-    "company_name": "Advanced Micro Devices Inc.",
-    "stock_type": "Equity",
-    "region": "United States"
-  },
-  {
-    "symbol": "AVDR",
-    "company_name": "Avedro Inc.",
-    "stock_type": "Equity",
-    "region": "United States"
-  },
-  {
-    "symbol": "PINE",
-    "company_name": "ALPINE INCOME PROPERTY TRUST Inc.",
-    "stock_type": "Equity",
-    "region": "United States"
-  },
-  {
-    "symbol": "AMHCU",
-    "company_name": "AMPLITUDE HEALTHCARE ACQUISITION CORP",
-    "stock_type": "Equity",
-    "region": "United States"
-  },
-  {
-    "symbol": "C",
-    "company_name": "Citigroup Inc.",
-    "stock_type": "Equity",
-    "region": "United States"
-  },
-  {
-    "symbol": "NET",
-    "company_name": "Cloudflare Inc.",
-    "stock_type": "Equity",
-    "region": "United States"
-  },
-  {
-    "symbol": "CSTL",
-    "company_name": "Castle Biosciences Inc.",
-    "stock_type": "Equity",
-    "region": "United States"
-  },
-  {
-    "symbol": "CWK",
-    "company_name": "Cushman & Wakefield plc",
-    "stock_type": "Equity",
-    "region": "United States"
-  },
-  {
-    "symbol": "CNST",
-    "company_name": "Constellation Pharmaceuticals Inc.",
-    "stock_type": "Equity",
-    "region": "United States"
-  },
-  {
-    "symbol": "CNSP",
-    "company_name": "CNS Pharmaceuticals Inc.",
-    "stock_type": "Equity",
-    "region": "United States"
-  },
-  {
-    "symbol": "CABA",
-    "company_name": "Cabaletta Bio Inc.",
-    "stock_type": "Equity",
-    "region": "United States"
-  },
-  {
-    "symbol": "CNTG",
-    "company_name": "Centogene N.V.",
-    "stock_type": "Equity",
-    "region": "United States"
-  },
-  {
-    "symbol": "CHK",
-    "company_name": "Chesapeake Energy Corporation",
-    "stock_type": "Equity",
-    "region": "United States"
-  },
-  {
-    "symbol": "CLF",
-    "company_name": "Cleveland-Cliffs Inc.",
-    "stock_type": "Equity",
-    "region": "United States"
-  },
-  {
-    "symbol": "D",
-    "company_name": "Dominion Energy Inc.",
-    "stock_type": "Equity",
-    "region": "United States"
-  },
-  {
-    "symbol": "DOYU",
-    "company_name": "DouYu International Holdings Limited",
-    "stock_type": "Equity",
-    "region": "United States"
-  },
-  {
-    "symbol": "DIS",
-    "company_name": "The Walt Disney Company",
-    "stock_type": "Equity",
-    "region": "United States"
-  },
-  {
-    "symbol": "DAO",
-    "company_name": "Youdao Inc.",
-    "stock_type": "Equity",
-    "region": "United States"
-  },
-  {
-    "symbol": "DUO",
-    "company_name": "Fangdd Network Group Ltd.",
-    "stock_type": "Equity",
-    "region": "United States"
-  },
-  {
-    "symbol": "DFNSU",
-    "company_name": "LGL Systems Acquisition Corp.",
-    "stock_type": "Equity",
-    "region": "United States"
-  },
-  {
-    "symbol": "DPW",
-    "company_name": "DPW Holdings Inc.",
-    "stock_type": "Equity",
-    "region": "United States"
-  },
-  {
-    "symbol": "DD",
-    "company_name": "DuPont de Nemours Inc.",
-    "stock_type": "Equity",
-    "region": "United States"
-  },
-  {
-    "symbol": "DOW",
-    "company_name": "Dow Inc.",
-    "stock_type": "Equity",
-    "region": "United States"
-  },
-  {
-    "symbol": "G",
-    "company_name": "Genpact Limited",
-    "stock_type": "Equity",
-    "region": "United States"
-  },
-  {
-    "symbol": "GRTX",
-    "company_name": "Galera Therapeutics Inc.",
-    "stock_type": "Equity",
-    "region": "United States"
-  },
-  {
-    "symbol": "GADS",
-    "company_name": "Gadsden Properties Inc.",
-    "stock_type": "Equity",
-    "region": "United States"
-  },
-  {
-    "symbol": "GFL",
-    "company_name": "GFL Environmental Inc.",
-    "stock_type": "Equity",
-    "region": "United States"
-  },
-  {
-    "symbol": "GOOG",
-    "company_name": "Alphabet Inc.",
-    "stock_type": "Equity",
-    "region": "United States"
-  },
-  {
-    "symbol": "GRNVU",
-    "company_name": "Greenvision Acquisition Corp.",
-    "stock_type": "Equity",
-    "region": "United States"
-  },
-  {
-    "symbol": "GE",
-    "company_name": "General Electric Company",
-    "stock_type": "Equity",
-    "region": "United States"
-  },
-  {
-    "symbol": "GERN",
-    "company_name": "Geron Corporation",
-    "stock_type": "Equity",
-    "region": "United States"
-  },
-  {
-    "symbol": "GS",
-    "company_name": "The Goldman Sachs Group Inc.",
-    "stock_type": "Equity",
-    "region": "United States"
-  },
-  {
-    "symbol": "S",
-    "company_name": "Sprint Corporation",
-    "stock_type": "Equity",
-    "region": "United States"
-  },
-  {
-    "symbol": "SILK",
-    "company_name": "Silk Road Medical  Inc",
-    "stock_type": "Equity",
-    "region": "United States"
-  },
-  {
-    "symbol": "SI",
-    "company_name": "Silvergate Capital Corporation",
-    "stock_type": "Equity",
-    "region": "United States"
-  },
-  {
-    "symbol": "STIM",
-    "company_name": "Neuronetics Inc.",
-    "stock_type": "Equity",
-    "region": "United States"
-  },
-  {
-    "symbol": "SITM",
-    "company_name": "SITIME CORP",
-    "stock_type": "Equity",
-    "region": "United States"
-  },
-  {
-    "symbol": "SAQNU",
-    "company_name": "SOFTWARE ACQUISITION GROUP INC.",
-    "stock_type": "Equity",
-    "region": "United States"
-  },
-  {
-    "symbol": "SFTWU",
-    "company_name": "OSPREY TECHNOLOGY ACQUISITION CORP.",
-    "stock_type": "Equity",
-    "region": "United States"
-  },
-  {
-    "symbol": "SPY",
-    "company_name": "SPDR S&P 500 ETF Trust",
-    "stock_type": "ETF",
-    "region": "United States"
-  },
-  {
-    "symbol": "L",
-    "company_name": "Loews Corporation",
-    "stock_type": "Equity",
-    "region": "United States"
-  },
-  {
-    "symbol": "LOGC",
-    "company_name": "LogicBio Therapeutics Inc.",
-    "stock_type": "Equity",
-    "region": "United States"
-  },
-  {
-    "symbol": "YZCM",
-    "company_name": "Leaping Group Co. Ltd.",
-    "stock_type": "Equity",
-    "region": "United States"
-  },
-  {
-    "symbol": "LK",
-    "company_name": "Luckin Coffee Inc.",
-    "stock_type": "Equity",
-    "region": "United States"
-  },
-  {
-    "symbol": "LMT",
-    "company_name": "Lockheed Martin Corporation",
-    "stock_type": "Equity",
-    "region": "United States"
-  },
-  {
-    "symbol": "LYFT",
-    "company_name": "Lyft Inc.",
-    "stock_type": "Equity",
-    "region": "United States"
-  },
-  {
-    "symbol": "LOW",
-    "company_name": "Lowe's Companies Inc.",
-    "stock_type": "Equity",
-    "region": "United States"
-  },
-  {
-    "symbol": "LRCX",
-    "company_name": "Lam Research Corporation",
-    "stock_type": "Equity",
-    "region": "United States"
-  },
-  {
-    "symbol": "LULU",
-    "company_name": "Lululemon Athletica Inc.",
-    "stock_type": "Equity",
-    "region": "United States"
-  },
-  {
-    "symbol": "M",
-    "company_name": "Macy's Inc.",
-    "stock_type": "Equity",
-    "region": "United States"
-  },
-  {
-    "symbol": "MSFT",
-    "company_name": "Microsoft Corporation",
-    "stock_type": "Equity",
-    "region": "United States"
-  },
-  {
-    "symbol": "MSC",
-    "company_name": "Studio City International Holdings Limited",
-    "stock_type": "Equity",
-    "region": "United States"
-  },
-  {
-    "symbol": "MOHO",
-    "company_name": "ECMOHO Limited",
-    "stock_type": "Equity",
-    "region": "United States"
-  },
-  {
-    "symbol": "MNPR",
-    "company_name": "Monopar Therapeutics Inc.",
-    "stock_type": "Equity",
-    "region": "United States"
-  },
-  {
-    "symbol": "T",
-    "company_name": "AT&T Inc.",
-    "stock_type": "Equity",
-    "region": "United States"
-  },
-  {
-    "symbol": "MO",
-    "company_name": "Altria Group Inc.",
-    "stock_type": "Equity",
-    "region": "United States"
-  },
-  {
-    "symbol": "MU",
-    "company_name": "Micron Technology Inc.",
-    "stock_type": "Equity",
-    "region": "United States"
-  },
-  {
-    "symbol": "MCD",
-    "company_name": "McDonald's Corporation",
-    "stock_type": "Equity",
-    "region": "United States"
-  },
-  {
-    "symbol": "K",
-    "company_name": "Kellogg Company",
-    "stock_type": "Equity",
-    "region": "United States"
-  },
-  {
-    "symbol": "KRUS",
-    "company_name": "Kura Sushi USA Inc.",
-    "stock_type": "Equity",
-    "region": "United States"
-  },
-  {
-    "symbol": "KRKR",
-    "company_name": "36Kr Holdings Inc.",
-    "stock_type": "Equity",
-    "region": "United States"
-  },
-  {
-    "symbol": "KRAT",
-    "company_name": "Karat Packaging Inc.",
-    "stock_type": "Equity",
-    "region": "United States"
-  },
-  {
-    "symbol": "KHC",
-    "company_name": "The Kraft Heinz Company",
-    "stock_type": "Equity",
-    "region": "United States"
-  },
-  {
-    "symbol": "KO",
-    "company_name": "The Coca-Cola Company",
-    "stock_type": "Equity",
-    "region": "United States"
-  },
-  {
-    "symbol": "KMI",
-    "company_name": "Kinder Morgan Inc.",
-    "stock_type": "Equity",
-    "region": "United States"
-  },
-  {
-    "symbol": "KERN",
-    "company_name": "Akerna Corp.",
-    "stock_type": "Equity",
-    "region": "United States"
-  },
-  {
-    "symbol": "KSS",
-    "company_name": "Kohl's Corporation",
-    "stock_type": "Equity",
-    "region": "United States"
-  },
-  {
-    "symbol": "KR",
-    "company_name": "The Kroger Co.",
-    "stock_type": "Equity",
-    "region": "United States"
-  },
-  {
-    "symbol": "NVDA",
-    "company_name": "NVIDIA Corporation",
-    "stock_type": "Equity",
-    "region": "United States"
-  },
-  {
-    "symbol": "NKE",
-    "company_name": "NIKE Inc.",
-    "stock_type": "Equity",
-    "region": "United States"
-  },
-  {
-    "symbol": "NIO",
-    "company_name": "NIO Inc.",
-    "stock_type": "Equity",
-    "region": "United States"
-  },
-  {
-    "symbol": "NFLX",
-    "company_name": "Netflix Inc.",
-    "stock_type": "Equity",
-    "region": "United States"
-  },
-  {
-    "symbol": "NOK",
-    "company_name": "Nokia Corporation",
-    "stock_type": "Equity",
-    "region": "United States"
-  },
-  {
-    "symbol": "NTNX",
-    "company_name": "Nutanix Inc.",
-    "stock_type": "Equity",
-    "region": "United States"
-  },
-  {
-    "symbol": "NEM",
-    "company_name": "Newmont Goldcorp Corporation",
-    "stock_type": "Equity",
-    "region": "United States"
-  },
-  {
-    "symbol": "H",
-    "company_name": "Hyatt Hotels Corporation",
-    "stock_type": "Equity",
-    "region": "United States"
-  },
-  {
-    "symbol": "HBT",
-    "company_name": "HBT Financial Inc.",
-    "stock_type": "Equity",
-    "region": "United States"
-  },
-  {
-    "symbol": "HYRE",
-    "company_name": "HyreCar Inc.",
-    "stock_type": "Equity",
-    "region": "United States"
-  },
-  {
-    "symbol": "HAPP",
-    "company_name": "Happiness Biotech Group Limited",
-    "stock_type": "Equity",
-    "region": "United States"
-  },
-  {
-    "symbol": "HD",
-    "company_name": "The Home Depot Inc.",
-    "stock_type": "Equity",
-    "region": "United States"
-  },
-  {
-    "symbol": "HAL",
-    "company_name": "Halliburton Company",
-    "stock_type": "Equity",
-    "region": "United States"
-  },
-  {
-    "symbol": "HEXO",
-    "company_name": "HEXO Corp.",
-    "stock_type": "Equity",
-    "region": "United States"
-  },
-  {
-    "symbol": "HPQ",
-    "company_name": "HP Inc.",
-    "stock_type": "Equity",
-    "region": "United States"
-  },
-  {
-    "symbol": "HON",
-    "company_name": "Honeywell International Inc.",
-    "stock_type": "Equity",
-    "region": "United States"
-  },
-  {
-    "symbol": "HUM",
-    "company_name": "Humana Inc.",
-    "stock_type": "Equity",
-    "region": "United States"
-  }
-        ]; 
-             
+  }];        
               
         function constructTable(selector) { 
               
@@ -723,7 +143,7 @@ $('.dataTables_length').addClass('bs-select');
                         row.append($('<td/>').html(val)); 
                 } 
 				
-				row.append($('<td/>').html('<button onclick="quantitychk(this);"> Buy </button>'));
+				row.append($('<td/>').html('<button onclick="quantitychkbuy(this);"> Buy </button>'));
                   
                 // Adding each row to the table 
                 $(selector).append(row); 
@@ -849,8 +269,12 @@ $('.dataTables_length').addClass('bs-select');
 <br/><br/>
 <button id="addbankinfo" align="center" style="align:center;">Add</button>
 <br/><br/>
-</div>
- 
+
+ <h3><button onclick="primaryacc()"> Primary Account</button> </h3>
+ <select id="selectopt">
+
+</select>
+</div> 
  <div>
 <p id = "GFG_UP" style =  "margin-top: 25px;font-size: 15px; font-weight: bold;"></p> 
 <br><br>
