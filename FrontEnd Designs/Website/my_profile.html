@@ -67,32 +67,82 @@ $('.dataTables_length').addClass('bs-select');
 		"Hello " + person + "! How are you today?";
 	  }
 	}
+$(document).ready(function(){
+        $("form").submit(function( event ) {
+  var formArray =  $( this ).serializeArray() ;
+  event.preventDefault();
+  var returnArray = {};
+  var finalArray = {};
+  console.log(formArray);
+  for (var i = 0; i < formArray.length; i++){
+    returnArray[formArray[i]['name']] = formArray[i]['value'];
+  }
+  finalArray = JSON.stringify(returnArray);
+  console.log(finalArray);
 
-		function addRow()
+
+    var xhttp = new XMLHttpRequest();
+    xhttp.onreadystatechange = function() {
+         if (this.readyState == 4 && this.status == 200) {
+             alert(this.responseText);
+         }
+    };
+    xhttp.open("POST", "http://localhost:9090/addBankAccount", true);
+    xhttp.setRequestHeader("Content-type", "application/json");
+    xhttp.send(finalArray);
+
+  });
+});
+		/*function addRow()
 		   {
 		   var body = document.getElementsByTagName("body");
 		   var tbl = document.getElementById('bankinfotab');
 		   
 				   var tblBody = document.createElement("tbody");
+				   var tblBody = document.createElement("tbody");
 				   var row = document.createElement("tr");
 				   var cell1 = document.createElement("td");
-				   cell1.innerHTML = "<input type='text' name='Bank Routing Number'>";
+				   cell1.innerHTML = "<input type='text'id='routingnumber' name='routingnumber'>";
 				row.appendChild(cell1);
 					var cell2 = document.createElement("td");
-				   cell2.innerHTML = "<input type='text' name='Bank Account Number'>";
+				   cell2.innerHTML = "<input type='text' id='accountNumber' name='accountnumber'>";
+				   console.log(document.getElementById('accountNumber'));
 				row.appendChild(cell2);
 					var cell3 = document.createElement("td");
-				   cell3.innerHTML = "<input type='text' name='Bank Balance'>";
+				   cell3.innerHTML = "<input type='text' name='balance'>";
 				row.appendChild(cell3);
 				tblBody.appendChild(row);
 				tbl.appendChild(tblBody);
 				body.appendChild(tbl);
-		   }
+
+				if(routingnumber != null && accountnumber != null)
+				{
+				    var accDetails = {routingnumber, accountnumber, balance};
+					var myJSON = JSON.stringify(accdetails);
+					console.log(myJSON);
+					var xhttp = new XMLHttpRequest();
+					xhttp.onreadystatechange = function() {
+						 if (this.readyState == 4 && this.status == 200) {
+							 console.log(this.responseText);
+							}
+						};
+					xhttp.open("POST", "http://localhost:9090/addBankAccount", true);
+					xhttp.setRequestHeader("Content-type", "application/json");
+					xhttp.send(myJSON);
+				}
+		   }*/
 		   function quantitychkbuy(o)
 			   {
-					var qntytobuy = prompt("Enter stock quantity to buy");
+					var numberOfUnits = prompt("Enter stock quantity to buy");
+					if(numberOfUnits != null){
 					var p = o.parentNode.parentNode;
 					var symbol = p.firstChild.innerHTML;
+					var company_name = symbol;
+					var accountNumber = prompt("Enter the Bank Account number");
+					if(accountNumber != null){
+					var buydetails = {symbol, company_name, numberOfUnits, accountNumber};
+					var myJSON = JSON.stringify(buydetails);
+					console.log(myJSON);
 					var xhttp = new XMLHttpRequest();
 					xhttp.onreadystatechange = function() {
 						 if (this.readyState == 4 && this.status == 200) {
@@ -101,9 +151,11 @@ $('.dataTables_length').addClass('bs-select');
 						};
 					xhttp.open("POST", "https://localhost:9090/buy", true);
 					xhttp.setRequestHeader("Content-type", "application/json");
-					xhttp.send(finalArray);
+					xhttp.send(myJSON);
+					}
+					}
 			   }
-			function primaryacc()
+			/*function primaryacc()
 			{
 				var x = document.getElementById("bankinfotab").rows.length;
 				for(var i=0; i<x; i++)
@@ -113,20 +165,26 @@ $('.dataTables_length').addClass('bs-select');
 				   console.log("ho"+z[1].innerHTML);
 				   cell1.innerHTML = "z[1].innerHTML";
 				}
-		    }
+		    }*/
 
         var el_up = document.getElementById("GFG_UP"); 
           
-        var list = [
-  {
-    "symbol": "PSTL",
-    "company_name": "Postal Realty Trust Inc.",
-    "stock_type": "Equity",
-    "region": "United States"
-  }];        
+        var list = [];
               
         function constructTable(selector) { 
-              
+              var xhttp = new XMLHttpRequest();
+			xhttp.onreadystatechange = function() {
+         if (this.readyState == 4 && this.status == 202) {
+               console.log("response text is "+ this.responseText);
+           list = JSON.parse(this.responseText);
+           //JSON.stringify("list is "+list);
+           console.log("list length "+list.length);
+          console.log("obj is "+list[0].symbol);
+         }
+    };
+    xhttp.open("GET", "https://localhost:9090/listStocks", true);
+    //xhttp.setRequestHeader("Content-type", "application/json");
+    xhttp.send();
             // Getting the all column names 
             var cols = Headers(list, selector);   
    
@@ -261,19 +319,35 @@ $('.dataTables_length').addClass('bs-select');
  <br><br>
  
 <div style="text-align: center;">
-<button type="button" onclick="addRow()">Add Bank Account Information</button>
 <br/><br/>
-<table id="bankinfotab" align = "center" border="1" style = "margin-top:10px;">
+<!--table id="bankinfotab" align = "center" border="1" style = "margin-top:10px;">
 <tr><th>Bank Routing Number</th><th>Bank Account Number</th><th>Bank Balance</th></tr>
-</table>
-<br/><br/>
-<button id="addbankinfo" align="center" style="align:center;">Add</button>
-<br/><br/>
+</table-->
+<div class="container">
+            <div class="signup-content">
+                <div class="signup-form">
+                    <h2 class="form-title">Add Bank Account Information</h2>
+                    <form method="POST" class="register-form" id="register-form"  action="">
+						<div class="form-group">
+                            <label for="email"><i class="zmdi zmdi-email">Account Number</i></label>
+                            <input type="text" name="accountnumber" id="accountnumber" placeholder="Your account number"/>
+                        </div>
+                        <div class="form-group">
+                            <label for="name"><i class="zmdi zmdi-account material-icons-name">Routing Number</i></label>
+                            <input type="text" name="routingnumber" id="routingnumber" placeholder="bank routing number"/>
+                        </div>
+                        <div class="form-group">
+                            <label for="address"><i class="zmdi zmdi-pin animated infinite wobble zmdi-hc-fw">Balance</i></label>
+                            <input id="balance" name="balance" placeholder="Balance" type="text"/>
+                        </div>
+						<div class="form-group form-button">
+                            <input type="submit" name="addbankinfo" id="bankinfo" class="form-submit" value="Add"/>
+                        </div>
+                    </form>
+                </div>
+				</div>
+</div>
 
- <h3><button onclick="primaryacc()"> Primary Account</button> </h3>
- <select id="selectopt">
-
-</select>
 </div> 
  <div>
 <p id = "GFG_UP" style =  "margin-top: 25px;font-size: 15px; font-weight: bold;"></p> 
