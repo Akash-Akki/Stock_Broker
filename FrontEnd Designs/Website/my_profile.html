@@ -67,70 +67,32 @@ $('.dataTables_length').addClass('bs-select');
 		"Hello " + person + "! How are you today?";
 	  }
 	}
-$(document).ready(function(){
-        $("form").submit(function( event ) {
-  var formArray =  $( this ).serializeArray() ;
-  event.preventDefault();
-  var returnArray = {};
-  var finalArray = {};
-  console.log(formArray);
-  for (var i = 0; i < formArray.length; i++){
-    returnArray[formArray[i]['name']] = formArray[i]['value'];
-  }
-  finalArray = JSON.stringify(returnArray);
-  console.log(finalArray);
+	$(document).ready(function(){
+			$("form").submit(function( event ) {
+	  var formArray =  $( this ).serializeArray() ;
+	  event.preventDefault();
+	  var returnArray = {};
+	  var finalArray = {};
+	  console.log(formArray);
+	  for (var i = 0; i < formArray.length; i++){
+		returnArray[formArray[i]['name']] = formArray[i]['value'];
+	  }
+	  finalArray = JSON.stringify(returnArray);
+	  console.log(finalArray);
 
 
-    var xhttp = new XMLHttpRequest();
-    xhttp.onreadystatechange = function() {
-         if (this.readyState == 4 && this.status == 200) {
-             alert(this.responseText);
-         }
-    };
-    xhttp.open("POST", "http://localhost:9090/addBankAccount", true);
-    xhttp.setRequestHeader("Content-type", "application/json");
-    xhttp.send(finalArray);
+		var xhttp = new XMLHttpRequest();
+		xhttp.onreadystatechange = function() {
+			 if (this.readyState == 4 && this.status == 200) {
+				 alert(this.responseText);
+			 }
+		};
+		xhttp.open("POST", "http://localhost:9090/addBankAccount", true);
+		xhttp.setRequestHeader("Content-type", "application/json");
+		xhttp.send(finalArray);
 
-  });
-});
-		/*function addRow()
-		   {
-		   var body = document.getElementsByTagName("body");
-		   var tbl = document.getElementById('bankinfotab');
-		   
-				   var tblBody = document.createElement("tbody");
-				   var tblBody = document.createElement("tbody");
-				   var row = document.createElement("tr");
-				   var cell1 = document.createElement("td");
-				   cell1.innerHTML = "<input type='text'id='routingnumber' name='routingnumber'>";
-				row.appendChild(cell1);
-					var cell2 = document.createElement("td");
-				   cell2.innerHTML = "<input type='text' id='accountNumber' name='accountnumber'>";
-				   console.log(document.getElementById('accountNumber'));
-				row.appendChild(cell2);
-					var cell3 = document.createElement("td");
-				   cell3.innerHTML = "<input type='text' name='balance'>";
-				row.appendChild(cell3);
-				tblBody.appendChild(row);
-				tbl.appendChild(tblBody);
-				body.appendChild(tbl);
-
-				if(routingnumber != null && accountnumber != null)
-				{
-				    var accDetails = {routingnumber, accountnumber, balance};
-					var myJSON = JSON.stringify(accdetails);
-					console.log(myJSON);
-					var xhttp = new XMLHttpRequest();
-					xhttp.onreadystatechange = function() {
-						 if (this.readyState == 4 && this.status == 200) {
-							 console.log(this.responseText);
-							}
-						};
-					xhttp.open("POST", "http://localhost:9090/addBankAccount", true);
-					xhttp.setRequestHeader("Content-type", "application/json");
-					xhttp.send(myJSON);
-				}
-		   }*/
+	  });
+	});
 		   function quantitychkbuy(o)
 			   {
 					var numberOfUnits = prompt("Enter stock quantity to buy");
@@ -155,19 +117,6 @@ $(document).ready(function(){
 					}
 					}
 			   }
-			/*function primaryacc()
-			{
-				var x = document.getElementById("bankinfotab").rows.length;
-				for(var i=0; i<x; i++)
-				{
-				   var cell1 = document.createElement("<option>");
-				   var z = document.getElementById("table").rows[x].cells;
-				   console.log("ho"+z[1].innerHTML);
-				   cell1.innerHTML = "z[1].innerHTML";
-				}
-		    }*/
-
-        var el_up = document.getElementById("GFG_UP"); 
           
         var list = [];
               
@@ -232,6 +181,43 @@ $(document).ready(function(){
                 return columns; 
         }
 		
+		function constructTable2(selector) { 
+              var xhttp = new XMLHttpRequest();
+			xhttp.onreadystatechange = function() {
+         if (this.readyState == 4 && this.status == 202) {
+               console.log("response text is "+ this.responseText);
+           list = JSON.parse(this.responseText);
+           //JSON.stringify("list is "+list);
+           console.log("list length "+list.length);
+          console.log("obj is "+list[0].symbol);
+         }
+    };
+    xhttp.open("GET", "https://localhost:9090/getUserProfileInfo", true);
+    //xhttp.setRequestHeader("Content-type", "application/json");
+    xhttp.send();
+            // Getting the all column names 
+            var cols = Headers(list, selector);   
+   
+            // Traversing the JSON data 
+            for (var i = 0; i < list.length; i++) { 
+                var row = $('<tr/>');    
+                for (var colIndex = 0; colIndex < cols.length ; colIndex++) 
+                { 
+                    var val = list[i][cols[colIndex]]; 
+                      
+                    // If there is any key, which is matching 
+                    // with the column name 
+                    if (val == null) val = "";   
+                        row.append($('<td/>').html(val)); 
+                } 
+				
+				row.append($('<td/>').html('<button onclick="quantitychkbuy(this);"> Buy </button>'));
+                  
+                // Adding each row to the table 
+                $(selector).append(row); 
+            } 
+        } 
+		
 </script>
 </head>
 
@@ -248,8 +234,11 @@ $(document).ready(function(){
 	<a href="firstpage.html" >Home</a>
 	</nav>
 </div>
-<p id="demo"></p>
 <br><br><br><br>
+<div>
+<div style="text-align: center;">
+<button id="myprofileinfo" onclick="constructTable2('#myinfo');" align="center"> My Profile Info</button>
+</div>
 <table id="myinfo" class="table table-hover table-bordered table-sm " cellspacing="0" 
 			 data-toggle="table"
 			 data-search="true"
@@ -262,19 +251,19 @@ $(document).ready(function(){
     <tr>
       <th class="th-sm">Name
       </th>
-	  <th>N1001391375</th>
-	</tr>
-	<tr>
       <th class="th-sm">Email
       </th>
-	  <th>dsjcnfkj@gmail.com</th>
-	</tr>
-	<tr>
       <th class="th-sm">Address
       </th>
-	  <th>1010 dfvg df df df</th>
     </tr>
   </thead>
+  <tbody>
+  <tr>
+      <td>N1001391375</td>
+      <td>Diwali 2010</td>
+      <td>10/10/2010</td>
+  </tr>
+  </tbody>
 </table>
 <table id="dtBasicExample" class="table table-hover table-bordered table-sm " cellspacing="0" width="100%" 
 			 data-toggle="table"
@@ -320,9 +309,6 @@ $(document).ready(function(){
  
 <div style="text-align: center;">
 <br/><br/>
-<!--table id="bankinfotab" align = "center" border="1" style = "margin-top:10px;">
-<tr><th>Bank Routing Number</th><th>Bank Account Number</th><th>Bank Balance</th></tr>
-</table-->
 <div class="container">
             <div class="signup-content">
                 <div class="signup-form">
@@ -352,13 +338,13 @@ $(document).ready(function(){
  <div>
 <p id = "GFG_UP" style =  "margin-top: 25px;font-size: 15px; font-weight: bold;"></p> 
 <br><br>
-<button onclick = "constructTable('#tablestk')"> View Stock Information</button>
+<button onclick = "constructTable('#tablestk');"> View Stock Information</button>
 <br><br> 
 <table align = "center" id="tablestk" border="1"> 
 </table> 
 <br><br>
 </div>
-
+</div>
 </body>
 </html>
 
