@@ -209,7 +209,7 @@ var x;
    }
 
 var list2=[];
-  function sell(){
+  function sell(selector){
 
 
               var xhttp = new XMLHttpRequest();
@@ -222,46 +222,54 @@ var list2=[];
           console.log("obj is "+list2[0].symbol);
           x=list2.symbol;
           console.log(" x is "+x);
-
-         }
-    };
-    xhttp.open("GET", "https://localhost:9090/listMyStocks", true);
-    //xhttp.setRequestHeader("Content-type", "application/json");
-    xhttp.send();
-                       var tr1= document.getElementById("td1")
-                       var tr2 = document.getElementById("td2");
-                       var tr3 = document.getElementById("td3");
-                       var tr4 = document.getElementById("td4");
-         for (var i = 0; i < list.length; i++) {
-                var row = $('<tr/>');
-                      var val = list[i][cols[colIndex]];
+              var row = $('<tr/>');
+              
+             
+             var td1= document.getElementById("td1")
+                       var td2 = document.getElementById("td2");
+                       var td3 = document.getElementById("td3");
+                       var td4 = document.getElementById("td4");
+                       for(var m=0;m<list2.length;m++){
 <!--                       console.log("val is "+ val);-->
 <!--                    // If there is any key, which is matching -->
 <!--                    // with the column name -->
 <!--                    if (val == null) val = "";   -->
 <!--                        row.append($('<td/>').html(val)); -->
 
-                        console.log("list2 symbol "+list2[i].symbol);
-                       trd1.innerHTML=list2[i].symbol;
-                       td2.innerHTML=list2[i].company;
-                       td3.innerHTML=list2[i].quantity;
+                       // console.log("list2 symbol "+list2[i].symbol);
+                       td2.innerHTML=list2[m].symbol;
+                       td3.innerHTML=list2[m].company;
+                       td4.innerHTML=list2[m].quantity;
 
-                  	row.append($('<td/>').html('<button onclick="quantitychkbuy(this);"> Buy </button>'));
+                  //	row.append($('<td/>').html('<button onclick="quantitychkbuy(this);"> Buy </button>'));
+            
+             
+                 $(selector).append(row);
+         }
+             
+             
+             
+
+         }
+    };
+    xhttp.open("GET", "https://localhost:9090/listMyStocks", true);
+    //xhttp.setRequestHeader("Content-type", "application/json");
+    xhttp.send();
+                       
                 }
 
 			
 
                 // Adding each row to the table
-                $(selector).append(row);
-            }
-
+               
+         
 
 
   
 </script>
 </head>
 
-<body class="container-fluid">
+<body class="container-fluid" onload="sell('#dtBasicExample');">
 <header>
 <img src="images/mycomp1.jpg" alt="Logo" style="height:40px"></img>
 </header>
@@ -277,36 +285,12 @@ var list2=[];
 <br><br><br><br>
 <div>
 <div style="text-align: center;">
-<button id="myprofileinfo" onclick="constructTable2('#myinfo');" align="center"> My Profile Info</button>
+<!--
+<button id="myprofileinfo" onclick="sell('#dtBasicExample');" align="center"> My Profile Info</button>-->
 </div>
-<br><br>
-    <br><br>
-    <table class="myTable">
-        <thead>
-        <tr>
-            <th scope="col">#</th>
-            <th scope="col">Symbol</th>
-            <th scope="col">Company Name</th>
-            <th scope="col">Quantity</th>
-        </tr>
-        </thead>
-        <tbody>
-        <tr>
-            <th scope="row">1</th>
-            <td id="tr1"></td>
-            <td id="tr2"></td>
-            <td id="tr3"></td>
-            <td id="tr4"></td>
-        </tr>
-        </tbody>
-        </table>
 
 <br><br>
     <br><br>
-
-
-
-
 
 
     <table id="dtBasicExample" class="table table-hover table-bordered table-sm " cellspacing="0" width="100%"
@@ -321,11 +305,11 @@ var list2=[];
     <tr>
       <th class="th-sm">
       </th>
-      <th class="th-sm">Order Description
+      <th class="th-sm">Symbol
       </th>
-      <th class="th-sm">Order Delivery Date
+      <th class="th-sm">Company Name
       </th>
-      <th class="th-sm">Order Total Price
+      <th class="th-sm">Quantity
       </th>
 	  <th class="th-sm">Sell
       </th>
