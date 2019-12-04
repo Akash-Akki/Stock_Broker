@@ -6,6 +6,16 @@ public class BuyStock {
     private String company_name;
     private int numberOfUnits;
     private int accountNumber;
+    private String username;
+
+
+    public String getUsername() {
+        return username;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
+    }
 
     public int getAccountNumber() {
         return accountNumber;

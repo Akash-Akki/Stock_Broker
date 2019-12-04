@@ -87,7 +87,7 @@ $('.dataTables_length').addClass('bs-select');
 				 alert(this.responseText);
 			 }
 		};
-		xhttp.open("POST", "http://localhost:9090/addBankAccount", true);
+		xhttp.open("POST", "https://localhost:9090/addBankAccount", true);
 		xhttp.setRequestHeader("Content-type", "application/json");
 		xhttp.send(finalArray);
 
@@ -119,6 +119,7 @@ $('.dataTables_length').addClass('bs-select');
 			   }
           
         var list = [];
+
               
         function constructTable(selector) { 
               var xhttp = new XMLHttpRequest();
@@ -126,6 +127,7 @@ $('.dataTables_length').addClass('bs-select');
          if (this.readyState == 4 && this.status == 202) {
                console.log("response text is "+ this.responseText);
            list = JSON.parse(this.responseText);
+
            //JSON.stringify("list is "+list);
            console.log("list length "+list.length);
           console.log("obj is "+list[0].symbol);
@@ -136,14 +138,15 @@ $('.dataTables_length').addClass('bs-select');
     xhttp.send();
             // Getting the all column names 
             var cols = Headers(list, selector);   
-   
+            console.log("col is"+cols[0]);
+
             // Traversing the JSON data 
             for (var i = 0; i < list.length; i++) { 
                 var row = $('<tr/>');    
                 for (var colIndex = 0; colIndex < cols.length ; colIndex++) 
                 { 
-                    var val = list[i][cols[colIndex]]; 
-                      
+                    var val = list[i][cols[colIndex]];
+                       console.log("val is "+ val);
                     // If there is any key, which is matching 
                     // with the column name 
                     if (val == null) val = "";   
@@ -157,67 +160,104 @@ $('.dataTables_length').addClass('bs-select');
             } 
         } 
           
-		
-        function Headers(list, selector) { 
-            var columns = []; 
-            var header = $('<tr/>'); 
-              
-            for (var i = 0; i < list.length; i++) { 
-                var row = list[i]; 
-                  
-                for (var k in row) { 
-                    if ($.inArray(k, columns) == -1) { 
-                        columns.push(k); 
-                          
-                        // Creating the header 
-                        header.append($('<th/>').html(k)); 
-                    } 
-					
-                } 
-            } 
-              
-            // Appending the header to the table 
-            $(selector).append(header); 
-                return columns; 
-        }
-		
-		function constructTable2(selector) { 
+
+var x;
+  var list1;
+		function constructTable2(selector) {
+
               var xhttp = new XMLHttpRequest();
 			xhttp.onreadystatechange = function() {
          if (this.readyState == 4 && this.status == 202) {
                console.log("response text is "+ this.responseText);
-           list = JSON.parse(this.responseText);
-           //JSON.stringify("list is "+list);
-           console.log("list length "+list.length);
-          console.log("obj is "+list[0].symbol);
+           list1 = JSON.parse(this.responseText);
+           //JSON.stringify("list1 is "+list1);
+          // console.log("list1 length "+list1.length);
+          console.log("obj is "+list1.symbol);
+          x=list1.symbol;
+          console.log(" x is "+x);
+
          }
     };
     xhttp.open("GET", "https://localhost:9090/getUserProfileInfo", true);
     //xhttp.setRequestHeader("Content-type", "application/json");
     xhttp.send();
-            // Getting the all column names 
-            var cols = Headers(list, selector);   
-   
-            // Traversing the JSON data 
-            for (var i = 0; i < list.length; i++) { 
-                var row = $('<tr/>');    
-                for (var colIndex = 0; colIndex < cols.length ; colIndex++) 
-                { 
-                    var val = list[i][cols[colIndex]]; 
-                      
-                    // If there is any key, which is matching 
-                    // with the column name 
-                    if (val == null) val = "";   
-                        row.append($('<td/>').html(val)); 
-                } 
-				
-				row.append($('<td/>').html('<button onclick="quantitychkbuy(this);"> Buy </button>'));
-                  
-                // Adding each row to the table 
-                $(selector).append(row); 
-            } 
-        } 
-		
+            // Getting the all column names
+
+  var table = document.getElementById("myTable");
+  //var x=document.createTextNode("new cell");
+ // var row = table.insertRow.append(list.symbol);
+   var tr1= document.getElementById("tr1")
+   var tr2 = document.getElementById("tr2");
+   var tr3 = document.getElementById("tr2");
+   var tr4 = document.getElementById("tr2");
+
+    //console.log("obj is "+list1.symbol);
+
+   console.log("x is "+x);
+   tr1.innerHTML=list1.symbol;
+   tr2.innerHTML=list1.company_name;
+   tr3.innerHTML=list1.quantity;
+   tr4.innerHTML=list1.netWorth;
+    //document.getElementById("tr2").appendChild(x);
+    //document.getElementById("tr3").appendChild(x);
+
+
+
+
+
+
+   }
+
+var list2=[];
+  function sell(){
+
+
+              var xhttp = new XMLHttpRequest();
+			xhttp.onreadystatechange = function() {
+         if (this.readyState == 4 && this.status == 202) {
+               console.log("response text is "+ this.responseText);
+           list2 = JSON.parse(this.responseText);
+           //JSON.stringify("list2 is "+list2);
+           console.log("list2 length "+list2.length);
+          console.log("obj is "+list2[0].symbol);
+          x=list2.symbol;
+          console.log(" x is "+x);
+
+         }
+    };
+    xhttp.open("GET", "https://localhost:9090/listMyStocks", true);
+    //xhttp.setRequestHeader("Content-type", "application/json");
+    xhttp.send();
+                       var tr1= document.getElementById("td1")
+                       var tr2 = document.getElementById("td2");
+                       var tr3 = document.getElementById("td3");
+                       var tr4 = document.getElementById("td4");
+         for (var i = 0; i < list.length; i++) {
+                var row = $('<tr/>');
+                      var val = list[i][cols[colIndex]];
+<!--                       console.log("val is "+ val);-->
+<!--                    // If there is any key, which is matching -->
+<!--                    // with the column name -->
+<!--                    if (val == null) val = "";   -->
+<!--                        row.append($('<td/>').html(val)); -->
+
+                        console.log("list2 symbol "+list2[i].symbol);
+                       trd1.innerHTML=list2[i].symbol;
+                       td2.innerHTML=list2[i].company;
+                       td3.innerHTML=list2[i].quantity;
+
+                  	row.append($('<td/>').html('<button onclick="quantitychkbuy(this);"> Buy </button>'));
+                }
+
+			
+
+                // Adding each row to the table
+                $(selector).append(row);
+            }
+
+
+
+  
 </script>
 </head>
 
@@ -239,7 +279,37 @@ $('.dataTables_length').addClass('bs-select');
 <div style="text-align: center;">
 <button id="myprofileinfo" onclick="constructTable2('#myinfo');" align="center"> My Profile Info</button>
 </div>
-<table id="myinfo" class="table table-hover table-bordered table-sm " cellspacing="0" 
+<br><br>
+    <br><br>
+    <table class="myTable">
+        <thead>
+        <tr>
+            <th scope="col">#</th>
+            <th scope="col">Symbol</th>
+            <th scope="col">Company Name</th>
+            <th scope="col">Quantity</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr>
+            <th scope="row">1</th>
+            <td id="tr1"></td>
+            <td id="tr2"></td>
+            <td id="tr3"></td>
+            <td id="tr4"></td>
+        </tr>
+        </tbody>
+        </table>
+
+<br><br>
+    <br><br>
+
+
+
+
+
+
+    <table id="dtBasicExample" class="table table-hover table-bordered table-sm " cellspacing="0" width="100%"
 			 data-toggle="table"
 			 data-search="true"
 			 data-filter-control="true" 
@@ -249,33 +319,7 @@ $('.dataTables_length').addClass('bs-select');
        class="table-responsive">
   <thead>
     <tr>
-      <th class="th-sm">Name
-      </th>
-      <th class="th-sm">Email
-      </th>
-      <th class="th-sm">Address
-      </th>
-    </tr>
-  </thead>
-  <tbody>
-  <tr>
-      <td>N1001391375</td>
-      <td>Diwali 2010</td>
-      <td>10/10/2010</td>
-  </tr>
-  </tbody>
-</table>
-<table id="dtBasicExample" class="table table-hover table-bordered table-sm " cellspacing="0" width="100%" 
-			 data-toggle="table"
-			 data-search="true"
-			 data-filter-control="true" 
-			 data-show-export="true"
-			 data-click-to-select="true"
-			 data-toolbar="#toolbar"
-       class="table-responsive">
-  <thead>
-    <tr>
-      <th class="th-sm">Order Number
+      <th class="th-sm">
       </th>
       <th class="th-sm">Order Description
       </th>
@@ -288,19 +332,12 @@ $('.dataTables_length').addClass('bs-select');
     </tr>
   </thead>
   <tbody>
-    <tr>
-      <td>N1001391375</td>
-      <td>Diwali 2010</td>
-      <td>10/10/2010</td>
-      <td>250 USD</td>
-	  <td><input type='button' value='Sell' onclick='sell();'/></td>
-    </tr>
-	<tr>
-      <td>N1001391376</td>
-      <td>Diwali 2011</td>
-      <td>10/10/2011</td>
-      <td>350 USD</td>
-	  <td><input type='button' value='Sell' onclick='sell();'/></td>
+    <tr id="row1">
+      <td id="td1"></td>
+      <td id="td2"></td>
+      <td id="td3"></td>
+      <td id="td4"></td>
+	  <td><input type='button' value='Sell' onclick="sell();"/></td>
     </tr>
   </tbody>
  </table>
@@ -340,8 +377,8 @@ $('.dataTables_length').addClass('bs-select');
 <br><br>
 <button onclick = "constructTable('#tablestk');"> View Stock Information</button>
 <br><br> 
-<table align = "center" id="tablestk" border="1"> 
-</table> 
+<table align = "center" id="tablestk" border="1">
+</table>
 <br><br>
 </div>
 </div>

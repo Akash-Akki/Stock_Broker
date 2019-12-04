@@ -8,7 +8,6 @@ import java.net.URL;
 import java.util.*;
 import javax.validation.Valid;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.gson.JsonObject;
@@ -22,10 +21,7 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import project.wpl.exception.InsufficientFundsException;
-import project.wpl.exception.InsufficientStocksException;
-import project.wpl.exception.ResourceNotFoundException;
-import project.wpl.exception.StocksNotFoundException;
+import project.wpl.exception.*;
 import project.wpl.model.*;
 import project.wpl.repository.*;
 
@@ -105,38 +101,84 @@ public class UserDetailServiceImpl implements UserDetailsService {
     }
 
     @Transactional
-    public void stockBuy(BuyStock buyStock,String username) throws InsufficientFundsException{
+    public void stockBuy(BuyStock buyStock) throws InsufficientFundsException, InvalidAccountNumberException {
         Optional<BankAccount> findByAccountNumber = bankAccountRepository.findById(buyStock.getAccountNumber());
+        System.out.println("Account Number is "+ buyStock.getAccountNumber());
+     //   System.out.println("Username is "+ findByAccountNumber.get().getUser_name());
+        System.out.println(("Second Username is "+buyStock.getUsername()));
+
+       // if(findByAccountNumber.get().getUser_name()!=buyStock.getUsername())
+         //     throw new InvalidAccountNumberException("Account Number does not exist");
+
         double updatedBalance=accountBalanceUpdate(buyStock,findByAccountNumber,"buy");
         if(updatedBalance<0)
             throw new InsufficientFundsException("Insufficent funds");
         findByAccountNumber.get().setBalance(updatedBalance);
         bankAccountRepository.save(findByAccountNumber.get());
-       UserShare findUserShareBySymbol = userShareRepository.findBySymbol(buyStock.getSymbol());
+        List<UserShare> findUserShareBySymbol = userShareRepository.findByUsername(buyStock.getUsername());
        UserShare userShare=new UserShare();
-       if(findUserShareBySymbol != null)
-       {
-                      int quantity=findUserShareBySymbol.getQuantity();
-                      int updatedQuantity= quantity+buyStock.getNumberOfUnits();
-                      findUserShareBySymbol.setQuantity(updatedQuantity);
-                      userShareRepository.save(findUserShareBySymbol);
-       }
-       else{
+       if(findUserShareBySymbol.size()!=0) {
+           for (int i = 0; i < findUserShareBySymbol.size(); i++) {
+               //System.out.println("username is "+findUserShareBySymbol.get(i).getUsername());
+              // System.out.println("company is "+findUserShareBySymbol.get(i).getCompany());
+
+               String symbol = findUserShareBySymbol.get(i).getSymbol();
+
+               System.out.println("symbol is "+symbol);
+               if (buyStock.getSymbol().equals(symbol)) {
+                   int quantity = findUserShareBySymbol.get(i).getQuantity();
+                   int updatedQuantity = quantity + buyStock.getNumberOfUnits();
+                //   System.out.println("updated quantity is "+updatedQuantity);
+
+                   findUserShareBySymbol.get(i).setQuantity(updatedQuantity);
+                   userShareRepository.save(findUserShareBySymbol.get(i));
+               }
+               else{
                      userShare.setSymbol(buyStock.getSymbol());
-                     userShare.setUsername(username);
+                     userShare.setCompany(buyStock.getCompany_name());
                      userShare.setQuantity(buyStock.getNumberOfUnits());
                      userShare.setCompany(buyStock.getCompany_name());
-                     System.out.println("before saving");
                      userShareRepository.save(userShare);
+               }
+
            }
+       }
+       else{
+           userShare.setSymbol(buyStock.getSymbol());
+           userShare.setUsername(buyStock.getUsername());
+           userShare.setQuantity(buyStock.getNumberOfUnits());
+           userShare.setCompany(buyStock.getCompany_name());
+          // findUserShareBySymbol.add(userShare);
+           System.out.println("before saving");
+           userShareRepository.save(userShare);
+
+       }
+//       if(findUserShareBySymbol != null)
+//       {
+//                      int quantity=findUserShareBySymbol.getQuantity();
+//                      int updatedQuantity= quantity+buyStock.getNumberOfUnits();
+//                      findUserShareBySymbol.setQuantity(updatedQuantity);
+//                      userShareRepository.save(findUserShareBySymbol);
+//       }
+//       else{
+//                     userShare.setSymbol(buyStock.getSymbol());
+//                     userShare.setUsername(buyStock.getUsername());
+//                     userShare.setQuantity(buyStock.getNumberOfUnits());
+//                     userShare.setCompany(buyStock.getCompany_name());
+//                     System.out.println("before saving");
+//                     userShareRepository.save(userShare);
+//           }
     }
 
-    public void stockSell(BuyStock buyStock, String username) throws InsufficientStocksException {
+    public void stockSell(BuyStock buyStock) throws InsufficientStocksException {
         Optional<BankAccount> findByAccountNumber = bankAccountRepository.findById(buyStock.getAccountNumber());
+         //      findByAccountNumber.get().getAccountnumber();
+
         double updatedBalance=accountBalanceUpdate(buyStock,findByAccountNumber,"sell");
-       findByAccountNumber.get().setBalance(updatedBalance);
+        findByAccountNumber.get().setBalance(updatedBalance);
         bankAccountRepository.save(findByAccountNumber.get());
-        UserShare findUserShareBySymbol = userShareRepository.findBySymbol(buyStock.getSymbol());
+        UserShare findUserShareBySymbol = (UserShare) userShareRepository.findByUsername(buyStock.getSymbol());
+
         int quantity=findUserShareBySymbol.getQuantity();
         if(buyStock.getNumberOfUnits()>quantity)
             throw new InsufficientStocksException("Insufficent stocks");
@@ -160,15 +202,17 @@ public class UserDetailServiceImpl implements UserDetailsService {
         else if(func.equals("sell"))
             updateBalance=currentAccountBalance+totalPrice;
         System.out.println("updated Balance"+updateBalance);
+
         return updateBalance;
     }
 
-    public String getProfileInfo(String username) throws JsonProcessingException {
+    public List<JsonNode> getProfileInfo(String username) throws IOException {
         List<UserShare> byUsername = userShareRepository.findByUsername(username);
-        List<String> symbolList =new ArrayList<String>();
+        List<UserDetailOutput> symbolList =new ArrayList<UserDetailOutput>();
         double stockPrice=0.0;
         double totalStockPrice=0.0;
         UserDetailOutput userDetailOutput = new UserDetailOutput();
+        List<JsonNode> jsonList=new ArrayList<JsonNode>();
        // Gson gson = new Gson();
         for(int i=0;i<byUsername.size();i++)
         {
@@ -181,15 +225,20 @@ public class UserDetailServiceImpl implements UserDetailsService {
               userDetailOutput.setQuantity(byUsername.get(i).getQuantity());
               userDetailOutput.setCompany_name(byUsername.get(i).getCompany());
               userDetailOutput.setSymbol(symbol);
+              symbolList.add(userDetailOutput);
               //System.out.println("total Stock price " +userDetailOutput.getNetWorth());
         }
         ObjectMapper objectMapper = new ObjectMapper();
         String userDetailOutputAsJsonString = objectMapper.writeValueAsString(userDetailOutput);
+
+        String userProfileJsonString = objectMapper.writeValueAsString(userDetailOutput);
+        JsonNode userProfileJsonNode = objectMapper.readTree(userProfileJsonString);
+        jsonList.add(userProfileJsonNode);
         //sonElement json = gson.toJsonTree(userDetailOutput);
        // System.out.println("json is "+json.toString());
         //return json.toString();
 
-        return userDetailOutputAsJsonString;
+        return jsonList;
 
     }
 
@@ -199,7 +248,7 @@ public class UserDetailServiceImpl implements UserDetailsService {
         StocksList stocksList=new StocksList();
         List<StocksList> list=new ArrayList<StocksList>();
         ObjectMapper objectMapper = new ObjectMapper();
-
+      System.out.println("in list Stocks ");
         //Gson gson = new Gson();
          List<JsonNode> jsonList=new ArrayList<JsonNode>();
          for(StocksList stocks: allStocks){
@@ -227,6 +276,41 @@ public class UserDetailServiceImpl implements UserDetailsService {
 
         return jsonList;
     }
+
+
+    public List<JsonNode> listMyStocks(String username) throws IOException {
+
+        List<UserShare> findByUsernameList = userShareRepository.findByUsername(username);
+        UserShare userShare=new UserShare();
+        List<UserShare> list=new ArrayList<UserShare>();
+        ObjectMapper objectMapper = new ObjectMapper();
+        System.out.println("in list Stocks ");
+        //Gson gson = new Gson();
+        List<JsonNode> jsonList=new ArrayList<JsonNode>();
+
+        for(UserShare userShares:findByUsernameList)
+        {
+
+              userShare.setQuantity(userShares.getQuantity());
+              userShare.setCompany(userShares.getCompany());
+              userShare.setSymbol(userShares.getSymbol());
+              list.add(userShare);
+
+            String stocksListJsonString = objectMapper.writeValueAsString(userShare);
+            JsonNode jsonNode = objectMapper.readTree(stocksListJsonString);
+            jsonList.add(jsonNode);
+
+        }
+        if(jsonList==null) {
+            throw new StocksNotFoundException("No Stocks Found");
+        }
+
+
+       return jsonList;
+
+
+    }
+
 
     public double currentValue(String symbol){
         String output = "";

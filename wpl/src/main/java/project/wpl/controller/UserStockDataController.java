@@ -10,7 +10,7 @@ import org.springframework.cache.annotation.Cacheable;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.RestTemplate;
-import project.wpl.kafka.Sender;
+//import project.wpl.kafka.Sender;
 import project.wpl.model.SingleStock;
 import project.wpl.model.Stocks;
 //import project.wpl.repository.StocksCacheRepository;
@@ -34,8 +34,8 @@ public class UserStockDataController {
     @Autowired
     StocksService stocksService;
 
-    @Autowired
-    Sender kafkaProducer;
+//    @Autowired
+//    Sender kafkaProducer;
 
     @GetMapping(value = "/currentPrice/{symbol}", produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
@@ -123,14 +123,14 @@ public class UserStockDataController {
     }
 
 
-    @PostMapping(value = "/kafkaTest", consumes = MediaType.APPLICATION_JSON_VALUE,
-            produces = MediaType.APPLICATION_JSON_VALUE)
-    public String kafkaTest(@Valid @RequestBody UserRegistry userRegistry) throws Exception {
-        JsonElement json = new Gson().toJsonTree(userRegistry);
-        System.out.println("In controller "+ json.toString());
-        kafkaProducer.send(json.toString());
-        return "Pushed to kafka";
-    }
+//    @PostMapping(value = "/kafkaTest", consumes = MediaType.APPLICATION_JSON_VALUE,
+//            produces = MediaType.APPLICATION_JSON_VALUE)
+//    public String kafkaTest(@Valid @RequestBody UserRegistry userRegistry) throws Exception {
+//        JsonElement json = new Gson().toJsonTree(userRegistry);
+//        System.out.println("In controller "+ json.toString());
+//        kafkaProducer.send(json.toString());
+//        return "Pushed to kafka";
+//    }
 
 
 
