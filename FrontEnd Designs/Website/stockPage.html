@@ -65,16 +65,6 @@
 
 
   var list;
-
-
-
-
-
-
-
-
-
-
                 var list = [];
         function constructTable(selector) { 
               var xhttp = new XMLHttpRequest();
@@ -106,7 +96,7 @@
                         row.append($('<td/>').html(val)); 
                 } 
 				
-				row.append($('<td/>').html('<button onclick="quantitychk(this);"> Buy </button>'));
+				//row.append($('<td/>').html('<button onclick="quantitychk(this);"> Buy </button>'));
                   
                 // Adding each row to the table 
                 $(selector).append(row); 
