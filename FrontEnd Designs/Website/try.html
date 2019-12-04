@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>FULLSTACKROVERS Stock Information</title>
+<meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <!-- Font Icon -->
+    <link rel="stylesheet" href="fonts/material-icon/css/material-design-iconic-font.min.css">
+
+    <!-- Main css -->
+    <link rel="stylesheet" href="css/style.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+	<style>
+			header {
+			   top: 5px;
+			   position:absolute;
+			   padding:10px;
+			   font: bold 16px italic Arial;
+			}
+
+			footer {
+			   position:absolute;
+			   bottom:0;
+			   width:100%;
+			   height:10%;   
+			   font: bold 16px italic Arial;
+			}
+			.sidenav {
+		  display: inline;
+		  overflow: hidden;
+		  background-color: none;
+		  position: fixed;
+		  top: 0px;
+		  width: 100%;
+		  right: 150px;
+		  margin-bottom: 2.5em;
+		}
+		.sidenav  a {
+		  float: right;
+		  display: block;
+		  color: #000;
+		  text-align: center;
+		  padding: 14px 16px;
+		  text-decoration: none;
+		  font-size: 17px;
+		}
+
+		.sidenav a.active {
+		  background-color: #4CAF50;
+		  color: white;
+		}
+
+		.sidenav a:hover:not(.active) {
+		  background-color: black;
+		  color: white;
+		}
+			
+	</style>
+	<script src= "https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"> </script>
+	 <script> 
+       //var el_up = document.getElementById("GFG_UP");
+
+
+
+         
+         	$(document).ready(function(){
+			$("form").submit(function( event ) {
+	  var formArray =  $( this ).serializeArray() ;
+	  event.preventDefault();
+	  var returnArray = {};
+	  var finalArray = {};
+	  console.log(formArray);
+	  for (var i = 0; i < formArray.length; i++){
+		returnArray[formArray[i]['name']] = formArray[i]['value'];
+	  }
+	  finalArray = JSON.stringify(returnArray);
+	  console.log(finalArray);
+
+
+		var xhttp = new XMLHttpRequest();
+		xhttp.onreadystatechange = function() {
+			 if (this.readyState == 4 && this.status == 200) {
+				 alert(this.responseText);
+			 }
+		};
+		xhttp.open("POST", "https://localhost:9090/addBankAccount", true);
+		xhttp.setRequestHeader("Content-type", "application/json");
+		xhttp.send(finalArray);
+
+	  });
+	});
+         
+         
+         
+         
+         
+         
+         
+         
+         
+         
+         
+         
+         
+         
+         
+         
+         
+         
+         
+         
+
+  var list;
+                var list = [];
+        function constructTable(selector) { 
+              var xhttp = new XMLHttpRequest();
+			xhttp.onreadystatechange = function() {
+         if (this.readyState == 4 && this.status == 202) {
+               console.log("response text is "+ this.responseText);
+           list = JSON.parse(this.responseText);
+           //JSON.stringify("list is "+list);
+           console.log("list length "+list.length);
+          console.log("obj is "+list[0].symbol);
+         }
+    };
+    xhttp.open("GET", "https://localhost:9090/listStocks", true);
+    //xhttp.setRequestHeader("Content-type", "application/json");
+    xhttp.send();
+            // Getting the all column names 
+            var cols = Headers(list, selector);
+
+            // Traversing the JSON data 
+            for (var i = 0; i < list.length; i++) { 
+                var row = $('<tr/>');    
+                for (var colIndex = 0; colIndex < cols.length ; colIndex++) 
+                { 
+                    var val = list[i][cols[colIndex]]; 
+                      
+                    // If there is any key, which is matching 
+                    // with the column name 
+                    if (val == null) val = "";   
+                        row.append($('<td/>').html(val)); 
+                } 
+				
+				row.append($('<td/>').html('<button onclick="quantitychk(this);"> Buy </button>'));
+                  
+                // Adding each row to the table 
+                $(selector).append(row); 
+            } 
+        } 
+          
+		function quantitychk(o)
+	   {
+			var p=o.parentNode.parentNode;
+			 p.parentNode.removeChild(p);
+	   }
+        function Headers(list, selector) { 
+            var columns = []; 
+            var header = $('<tr/>'); 
+              
+            for (var i = 0; i < list.length; i++) { 
+                var row = list[i]; 
+                  
+                for (var k in row) { 
+                    if ($.inArray(k, columns) == -1) { 
+                        columns.push(k); 
+                          
+                        // Creating the header 
+                        header.append($('<th/>').html(k)); 
+                    } 
+					
+                } 
+            } 
+              
+            // Appending the header to the table 
+            $(selector).append(header); 
+                return columns; 
+        }        
+    </script>
+</head>
+
+<body>
+<header>
+<img src="images/mycomp1.jpg" alt="Logo" style="height:40px"></img>
+</header>
+</header>
+<div id="firstsec">
+	<nav class="sidenav">
+	<a href="login.html" >Sign in</a>
+	<a href="about.html" >About</a>
+	<a href="stockPage.html" >StockPage</a>
+	<a href="my_profile.html" >My Profile</a>
+	<a href="firstpage.html" >Home</a>
+    </nav>
+</div>
+<br><br><br><br>
+
+
+
+
+
+
+
+
+<div style="text-align: center;">
+<br/><br/>
+<div class="container">
+            <div class="signup-content">
+                <div class="signup-form">
+                    <h2 class="form-title">Add Bank Account Information</h2>
+                    <form method="POST" class="register-form" id="register-form"  action="">
+						<div class="form-group">
+                            <label for="email"><i class="zmdi zmdi-email">Account Number</i></label>
+                            <input type="text" name="accountnumber" id="accountnumber" placeholder="Your account number"/>
+                        </div>
+                        <div class="form-group">
+                            <label for="name"><i class="zmdi zmdi-account material-icons-name">Routing Number</i></label>
+                            <input type="text" name="routingnumber" id="routingnumber" placeholder="bank routing number"/>
+                        </div>
+                        <div class="form-group">
+                            <label for="address"><i class="zmdi zmdi-pin animated infinite wobble zmdi-hc-fw">Balance</i></label>
+                            <input id="balance" name="balance" placeholder="Balance" type="text"/>
+                        </div>
+						<div class="form-group form-button">
+                            <input type="submit" name="addbankinfo" id="bankinfo" class="form-submit" value="Add"/>
+                        </div>
+                    </form>
+                </div>
+				</div>
+</div>
+
+</div>
+
+
+
+
+
+
+<button onclick = "constructTable('#table')"> 
+        View Stock Information
+    </button> 
+	
+<br><br> 
+      
+    <table align = "center"
+            id="table" border="1"> 
+    </table> 
+<br><br>
+</body>
+</html>
