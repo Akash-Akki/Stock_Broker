@@ -74,7 +74,7 @@
                    $("#stktab tr").click(function(){
                    $(this).addClass('selected').siblings().removeClass('selected');
                    value=$(this).find('td:first').html();
-
+                   console.log("val is "+value);
                 });
             }
             function sendstock(selector)
@@ -89,6 +89,10 @@
 				console.log(myJSON);*/
 
                 var xhttp = new XMLHttpRequest();
+                 var month = document.getElementById("month").value;
+             
+                console.log("year is "+month);
+               // console.log("month is"+month1)
                 xhttp.onreadystatechange = function() {
                      if (this.readyState == 4 && this.status == 202)
                      {
@@ -96,7 +100,7 @@
                         console.log("received successfully fm BE");
                             list1 = JSON.parse(this.responseText);
                             var newlist = list1.stocksList;
-                            console.log(newlist);
+                            //console.log(newlist);
                             var cols = Headers(newlist, selector);
 
                             // Traversing the JSON data
@@ -106,7 +110,7 @@
                                 for (var colIndex = 0; colIndex < cols.length ; colIndex++)
                                 {
                                     var val = newlist[i][cols[colIndex]];
-
+                                    
                                     // If there is any key, which is matching
                                     // with the column name
 
@@ -119,8 +123,8 @@
                                 // Adding each row to the table
                                 $(selector).append(row);
                             }
-                               console.log("response text is "+ this.responseText);
-
+                               //console.log("response text is "+ this.responseText);
+                                  //console.log("val is "+val);
                            //JSON.stringify("list is "+list);
                          //  console.log("list length "+list.length);
                          // console.log("obj is "+list[0].symbol);
@@ -129,7 +133,7 @@
                       }
 
                 };
-                xhttp.open("GET", "https://localhost:9090/monthToDate/"+value, true);
+                xhttp.open("GET", "https://localhost:9090/monthToDate/"+value+"/"+month, true);
                 xhttp.setRequestHeader("Content-type", "application/json");
                 xhttp.send();
             }
@@ -163,11 +167,11 @@
                         // Adding each row to the table
                         $(selector).append(row);
                     }
-                       console.log("response text is "+ this.responseText);
+                      // console.log("response text is "+ this.responseText);
 
                    //JSON.stringify("list is "+list);
-                   console.log("list length "+list.length);
-                  console.log("obj is "+list[0].symbol);
+                   //console.log("list length "+list.length);
+                  //console.log("obj is "+list[0].symbol);
 
                   checkValue();
                  }

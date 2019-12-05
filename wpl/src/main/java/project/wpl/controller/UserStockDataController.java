@@ -94,11 +94,11 @@ public class UserStockDataController {
         return result;
     }
 
-    @GetMapping(value = "/monthToDate/{symbol}", produces = MediaType.APPLICATION_JSON_VALUE)
+    @GetMapping(value = "/monthToDate/{symbol}/{month}", produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
-    public ResponseEntity getMonthToDate(@PathVariable("symbol") String symbol){
+    public ResponseEntity getMonthToDate(@PathVariable("symbol") String symbol,@PathVariable("month") String month) {
           ObjectMapper objectMapper = new ObjectMapper();
-          final String uri = "http://localhost:9093/monthToDate/" + symbol;
+          final String uri = "http://localhost:9093/monthToDate/" + symbol+"/"+month;
           RestTemplate restTemplate = new RestTemplate();
           String result = restTemplate.getForObject(uri, String.class);
         //  System.out.println("outpu "+ result);
@@ -106,11 +106,11 @@ public class UserStockDataController {
         return new ResponseEntity(result, HttpStatus.ACCEPTED);
     }
 
-    @GetMapping(value = "/yearToDate/{symbol}", produces = MediaType.APPLICATION_JSON_VALUE)
+    @GetMapping(value = "/yearToDate/{symbol}/{year}", produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
-    public ResponseEntity getYearToDate(@PathVariable("symbol") String symbol){
+    public ResponseEntity getYearToDate(@PathVariable("symbol") String symbol, @PathVariable("year") String year){
 
-        final String uri = "http://localhost:9093/yearToDate/"+symbol;
+        final String uri = "http://localhost:9093/yearToDate/"+symbol+"/"+year;
         RestTemplate restTemplate = new RestTemplate();
         String result = restTemplate.getForObject(uri, String.class);
         return new ResponseEntity(result, HttpStatus.ACCEPTED);
