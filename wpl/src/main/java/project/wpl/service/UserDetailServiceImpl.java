@@ -88,6 +88,10 @@ public class UserDetailServiceImpl implements UserDetailsService {
            Optional<BankAccount> findFromAccountById = bankAccountRepository.findById(transferInfo.getFromAccountNumber());
            double fromAcccountBalance = findFromAccountById.get().getBalance();
 
+           System.out.println("transerInfo "+transferInfo.getFromAccountNumber());
+           System.out.println("transfer info to " + transferInfo.getToAccounNumber());
+           System.out.println("balance "+ transferInfo.getAmountToTransfer());
+           //System.out.println(accountBalance"");
            if(fromAcccountBalance<transferInfo.getAmountToTransfer()) throw new InsufficientFundsException("Insufficent funds");
            double balance = findByIdResult.get().getBalance();
            double updatedBalance = balance + transferInfo.getAmountToTransfer();
@@ -184,18 +188,25 @@ public class UserDetailServiceImpl implements UserDetailsService {
     public void stockSell(BuyStock buyStock) throws InsufficientStocksException {
         Optional<BankAccount> findByAccountNumber = bankAccountRepository.findById(buyStock.getAccountNumber());
          //      findByAccountNumber.get().getAccountnumber();
-
+        System.out.println("account number "+buyStock.getAccountNumber());
+        System.out.println("");
         double updatedBalance=accountBalanceUpdate(buyStock,findByAccountNumber,"sell");
         findByAccountNumber.get().setBalance(updatedBalance);
         bankAccountRepository.save(findByAccountNumber.get());
-        UserShare findUserShareBySymbol = (UserShare) userShareRepository.findByUsername(buyStock.getSymbol());
+        List<UserShare> findUserShareBySymbol = userShareRepository.findByUsername(buyStock.getUsername());
+      for(int i=0;i<findUserShareBySymbol.size();i++)
+      {
+            String symbol = findUserShareBySymbol.get(i).getSymbol();
+            if(buyStock.getSymbol().equals(symbol) ){
+          int quantity = findUserShareBySymbol.get(i).getQuantity();
+          if (buyStock.getNumberOfUnits() > quantity)
+              throw new InsufficientStocksException("Insufficent stocks");
+          int updatedQuantity = quantity - buyStock.getNumberOfUnits();
+          findUserShareBySymbol.get(i).setQuantity(updatedQuantity);
+          userShareRepository.save(findUserShareBySymbol.get(i));
+      }
+      }
 
-        int quantity=findUserShareBySymbol.getQuantity();
-        if(buyStock.getNumberOfUnits()>quantity)
-            throw new InsufficientStocksException("Insufficent stocks");
-        int updatedQuantity= quantity-buyStock.getNumberOfUnits();
-        findUserShareBySymbol.setQuantity(updatedQuantity);
-        userShareRepository.save(findUserShareBySymbol);
     }
 
 
@@ -237,14 +248,15 @@ public class UserDetailServiceImpl implements UserDetailsService {
               userDetailOutput.setCompany_name(byUsername.get(i).getCompany());
               userDetailOutput.setSymbol(symbol);
               symbolList.add(userDetailOutput);
+            ObjectMapper objectMapper = new ObjectMapper();
+            String userDetailOutputAsJsonString = objectMapper.writeValueAsString(userDetailOutput);
+
+            String userProfileJsonString = objectMapper.writeValueAsString(userDetailOutput);
+            JsonNode userProfileJsonNode = objectMapper.readTree(userProfileJsonString);
+            jsonList.add(userProfileJsonNode);
               //System.out.println("total Stock price " +userDetailOutput.getNetWorth());
         }
-        ObjectMapper objectMapper = new ObjectMapper();
-        String userDetailOutputAsJsonString = objectMapper.writeValueAsString(userDetailOutput);
 
-        String userProfileJsonString = objectMapper.writeValueAsString(userDetailOutput);
-        JsonNode userProfileJsonNode = objectMapper.readTree(userProfileJsonString);
-        jsonList.add(userProfileJsonNode);
         //sonElement json = gson.toJsonTree(userDetailOutput);
        // System.out.println("json is "+json.toString());
         //return json.toString();

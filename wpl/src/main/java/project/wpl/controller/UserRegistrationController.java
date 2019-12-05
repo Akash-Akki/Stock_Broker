@@ -149,6 +149,9 @@ public class UserRegistrationController {
   {
      try {
        userDetailService.transferMoney(transferInfo);
+       System.out.println("transerInfo ---- "+transferInfo.getFromAccountNumber());
+       System.out.println("transfer info to " + transferInfo.getToAccounNumber());
+       System.out.println("balance "+ transferInfo.getAmountToTransfer());
      }
      catch(InsufficientFundsException e)
      {
@@ -245,6 +248,7 @@ public class UserRegistrationController {
   public ResponseEntity getUserProfileInfo(@RequestParam Map<String,String> params,HttpSession session) throws IOException {
     //String username = (String) session.getAttribute("username");
     String username= cookie.getValue();
+    System.out.println("in user profile info");
     List<JsonNode> jsonNodeList =new ArrayList<JsonNode>();
     try {
       if (username == null) {
