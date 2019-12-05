@@ -23,21 +23,20 @@ Logger logger = LoggerFactory.getLogger(Receiver.class);
 
     @KafkaListener(topics = "buywpl", groupId = "project")
     public void receiveBuy(String payload) throws InvalidAccountNumberException, InterruptedException {
+        Thread.sleep(10000);
         Gson g = new Gson();
         BuyStock p = g.fromJson(payload, BuyStock.class);
-
         userDetailService.stockBuy(p);
-        Thread.sleep(10000);
        System.out.println("in receiver "+payload);
         logger.info("Kafka consumer "+payload);
     }
 
     @KafkaListener(topics = "sellwpl", groupId = "project")
     public void receiveSell(String payload) throws InvalidAccountNumberException, NoSuchStockException, InterruptedException {
+        Thread.sleep(10000);
         Gson g = new Gson();
         BuyStock p = g.fromJson(payload, BuyStock.class);
         userDetailService.stockSell(p);
-        Thread.sleep(10000);
         System.out.println("in receiver "+payload);
         logger.info("Kafka consumer "+payload);
     }
