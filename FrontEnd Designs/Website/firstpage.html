@@ -10,6 +10,9 @@
     <link rel="stylesheet" href="fonts/material-icon/css/material-design-iconic-font.min.css">
 
     <!-- Main css -->
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/js/bootstrap.min.js"></script>
     <link rel="stylesheet" href="css/style.css">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
 	<script src="https://code.jquery.com/jquery-3.3.1.js"></script>
@@ -63,7 +66,7 @@
 		  text-align: left;
 		}
 
-			
+
 	</style>
 </head>
 <body>
@@ -75,17 +78,71 @@
 	<a href="login.html" >Sign in</a>
 	<a href="about.html" >About</a>
 	<a href="stockPage.html" >StockPage</a>
-	<a href="my_profile.html" >My Profile</a>
+	<!--a href="my_profile.html" >My Profile</a-->
+	<span class="navbar-brand mb-0 h1">Navbar</span>
 	<a href="firstpage.html" >Home</a>
 	</nav>
 </div>
-<br><br><br><br>
-<table>
+</br></br></br><h2 style="text-align:center">Key to Making Money Safely at FSR</h2></br>
+<div class="container">
+  <div id="myCarousel" class="carousel slide" data-ride="carousel">
+    <!-- Indicators -->
+    <ol class="carousel-indicators">
+      <li data-target="#myCarousel" data-slide-to="0" class="active"></li>
+      <li data-target="#myCarousel" data-slide-to="1"></li>
+      <li data-target="#myCarousel" data-slide-to="2"></li>
+    </ol>
+
+    <!-- Wrapper for slides -->
+    <div class="carousel-inner">
+
+	   <div class="item">
+        <img src="images/stockmarket.jpg" alt="New York" style="width:100%;">
+        <div class="carousel-caption">
+        </div>
+      </div>
+
+      <div class="item">
+        <img src="images/graph.jpg" alt="Los Angeles" style="width:100%; opacity:0.8">
+        <div class="carousel-caption">
+        </div>
+      </div>
+
+      <div class="item active">
+        <img src="images/key.jpg" alt="Chicago" style="width:100%;opacity:0.8">
+        <div class="carousel-caption">
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Left and right controls -->
+    <a class="left carousel-control" href="#myCarousel" data-slide="prev">
+      <span class="glyphicon glyphicon-chevron-left"></span>
+      <span class="sr-only">Previous</span>
+    </a>
+    <a class="right carousel-control" href="#myCarousel" data-slide="next">
+      <span class="glyphicon glyphicon-chevron-right"></span>
+      <span class="sr-only">Next</span>
+    </a>
+  </div>
+</div>
+
+<table style="margin:100px">
+<!--tr>
+<td> <button class="btn btn-outline-primary"> <h5><a href="stockPage.html">STOCKS OF PREVIOUS WORKING DAY</a></h5> </button></td>
+<td> <button class="btn btn-outline-primary"><h5><a href="stockPage.html">STOCKS OF LAST WEEK</a></h5></button> </td>
+<td> <button class="btn btn-outline-primary">
+<h5> <a href="stockPage.html">STOCKS OF MONTH-to-Date </a></h5> </button></td>
+<td> <button class="btn btn-outline-primary">
+<h5> <a href="stockPage.html">STOCKS OF YEAR-to-date</a></h5> </button></td>
+<td>  <button class="btn btn-outline-primary"><a href="stockPage.html">STOCKS OF LAST 5 YEAR</a> </button></td>
+</tr-->
 	<tr>
 		<td>
 	<div class="col-sm-3">
 		<div class="card card-block">
-			<img class="card-img-top" src="images/firstpage_bg.jpg" style="height: 150px; width: 50%; display: inline;">
+			<!--img class="card-img-top" src="images/firstpage_bg.jpg" style="height: 150px; width: 50%; display: inline;"-->
 			<div class="card-block">
 				<h4 class="card-title">Current Stock Price</h4>
 				<a href="currentPrice.html" class="btn btn-primary">View</a>
@@ -96,7 +153,7 @@
 		<td>
 	<div class="col-sm-3">
 		<div class="card card-block">
-			<img class="card-img-top" src="images/firstpage_bg.jpg" style="height: 150px; width: 50%; display: inline;">
+			<!--img class="card-img-top" src="images/firstpage_bg.jpg" style="height: 150px; width: 50%; display: inline;"-->
 			<div class="card-block">
 				<h4 class="card-title">Last Week Price</h4>
 				<a href="lastweek.html" class="btn btn-primary">View</a>
@@ -107,7 +164,7 @@
 	<td>
 	<div class="col-sm-3">
 		<div class="card card-block">
-			<img class="card-img-top" src="images/firstpage_bg.jpg" style="height: 150px; width: 50%; display: inline;">
+			<!--img class="card-img-top" src="images/firstpage_bg.jpg" style="height: 150px; width: 50%; display: inline;"-->
 			<div class="card-block">
 				<h4 class="card-title">Month to Date Price</h4>
 				<a href="monthToDate.html" class="btn btn-primary">View</a>
@@ -118,7 +175,7 @@
 	<td>
 	<div class="col-sm-3">
 		<div class="card card-block">
-			<img class="card-img-top" src="images/firstpage_bg.jpg" style="height: 150px; width: 50%; display: inline;">
+			<!--img class="card-img-top" src="images/firstpage_bg.jpg" style="height: 150px; width: 50%; display: inline;"-->
 			<div class="card-block">
 				<h4 class="card-title">Year to Date Price</h4>
 				<a href="yearToDate.html" class="btn btn-primary">View</a>
@@ -129,7 +186,7 @@
 		<td>
 			<div class="col-sm-3">
 				<div class="card card-block">
-					<img class="card-img-top" src="images/firstpage_bg.jpg" style="height: 150px; width: 50%; display: inline;">
+					<!--img class="card-img-top" src="images/firstpage_bg.jpg" style="height: 150px; width: 50%; display: inline;"-->
 					<div class="card-block">
 						<h4 class="card-title">Last 5 Year Price</h4>
 						<a href="last5year.html" class="btn btn-primary">View</a>
@@ -139,5 +196,6 @@
 		</td>
 	</tr>
 </table>
+<br/><br/><br/><br/><br/><br/>
 </body>
 </html>

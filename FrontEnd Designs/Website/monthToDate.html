@@ -7,6 +7,7 @@
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <!-- Font Icon -->
     <link rel="stylesheet" href="fonts/material-icon/css/material-design-iconic-font.min.css">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/css/bootstrap.min.css">
 
     <!-- Main css -->
     <link rel="stylesheet" href="css/style.css">
@@ -218,7 +219,7 @@
         <a href="login.html" >Sign in</a>
         <a href="about.html" >About</a>
         <a href="stockPage.html" >StockPage</a>
-        <a href="my_profile.html" >My Profile</a>
+        <!--a href="my_profile.html" >My Profile</a-->
         <a href="firstpage.html" >Home</a>
     </nav>
 </div>
@@ -237,7 +238,7 @@
     <option value="November"> November </option>
     <option value="December"> December </option>
 </select>
-<button id="checkVal" value="OK" onclick="sendstock('#stktab');">Submit
+<button id="checkVal" class="btn btn-outline-primary" value="OK" onclick="sendstock('#stktab');">Submit
     </button>
 <table align = "center"
        id="stktab" border="1">
