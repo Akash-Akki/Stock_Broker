@@ -76,9 +76,11 @@
 
 		var xhttp = new XMLHttpRequest();
 		xhttp.onreadystatechange = function() {
-			 if (this.readyState == 4 && this.status == 200) {
-				 alert(this.responseText);
+			 if (this.readyState == 4 && this.status == 202) {
+				  window.location.href='my_profile.html';
 			 }
+			 else
+			  alert('Error adding Bank Account'+ this.resposeText);
 		};
 		xhttp.open("POST", "https://localhost:9090/addBankAccount", true);
 		xhttp.setRequestHeader("Content-type", "application/json");
