@@ -148,6 +148,25 @@ $('.dataTables_length').addClass('bs-select');
 					}
 					}
 			   }
+        
+        function customlogout(){
+            
+              var cookie= document.cookie.get;
+            console.log("cookie "+cookie);
+            var xhttp = new XMLHttpRequest();
+					xhttp.onreadystatechange = function() {
+						 if (this.readyState == 4 && this.status == 200) {
+							 console.log(this.responseText);
+                             window.location.href="firstpage.html";
+                             
+							}
+						};
+					xhttp.open("GET", "https://localhost:9090/customlogout", true);
+					//xhttp.setRequestHeader("Content-type", "application/json");
+					xhttp.send();
+            
+        }
+        
 </script>
 </head>
 
@@ -157,6 +176,7 @@ $('.dataTables_length').addClass('bs-select');
 </header>
 <div id="firstsec">
 	<nav class="sidenav">
+    <a href="#" onclick="customlogout()">Sign Out</a><br />
 	<a href="login.html" >Sign in</a>
 	<a href="about.html" >About</a>
 	<a href="stockPage.html" >StockPage</a>
