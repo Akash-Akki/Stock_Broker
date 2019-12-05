@@ -8,6 +8,7 @@ import java.net.URL;
 import java.util.*;
 import javax.validation.Valid;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.gson.JsonObject;
@@ -185,7 +186,7 @@ public class UserDetailServiceImpl implements UserDetailsService {
 //           }
     }
 
-    public void stockSell(BuyStock buyStock) throws InsufficientStocksException {
+    public void stockSell(BuyStock buyStock) throws InsufficientStocksException, NoSuchStockException {
         Optional<BankAccount> findByAccountNumber = bankAccountRepository.findById(buyStock.getAccountNumber());
          //      findByAccountNumber.get().getAccountnumber();
         System.out.println("account number "+buyStock.getAccountNumber());
@@ -194,18 +195,36 @@ public class UserDetailServiceImpl implements UserDetailsService {
         findByAccountNumber.get().setBalance(updatedBalance);
         bankAccountRepository.save(findByAccountNumber.get());
         List<UserShare> findUserShareBySymbol = userShareRepository.findByUsername(buyStock.getUsername());
+        boolean flag= false;
       for(int i=0;i<findUserShareBySymbol.size();i++)
       {
+          System.out.println("in sell flag before");
+          flag=true;
             String symbol = findUserShareBySymbol.get(i).getSymbol();
             if(buyStock.getSymbol().equals(symbol) ){
+
           int quantity = findUserShareBySymbol.get(i).getQuantity();
           if (buyStock.getNumberOfUnits() > quantity)
               throw new InsufficientStocksException("Insufficent stocks");
+          else if(buyStock.getNumberOfUnits() == quantity)
+          {
+
+              userShareRepository.delete(findUserShareBySymbol.get(i));
+              break;
+          }
           int updatedQuantity = quantity - buyStock.getNumberOfUnits();
+          System.out.println("updated quantity "+updatedQuantity);
           findUserShareBySymbol.get(i).setQuantity(updatedQuantity);
           userShareRepository.save(findUserShareBySymbol.get(i));
+
+          break;
+       }
       }
-      }
+        if(flag == false)
+        {
+            throw new NoSuchStockException("no such stock");
+
+        }
 
     }
 
@@ -374,5 +393,17 @@ public class UserDetailServiceImpl implements UserDetailsService {
     }
 
 
+    public JsonNode getUserInfo(String username) throws IOException {
+        UserRegistry userRegistry = registrationRepository.findByUsername(username);
+          UserRegistry userRegistry1 =new UserRegistry();
+          userRegistry1.setAddress(userRegistry.getAddress());
+          userRegistry1.setEmail(userRegistry.getEmail());
+          userRegistry1.setUsername(userRegistry.getUsername());
+        ObjectMapper objectMapper = new ObjectMapper();
 
+        String userRegistryJsonString = objectMapper.writeValueAsString(userRegistry1);
+        JsonNode jsonNode = objectMapper.readTree(userRegistryJsonString);
+
+        return  jsonNode;
+    }
 }

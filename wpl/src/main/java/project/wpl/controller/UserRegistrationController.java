@@ -182,12 +182,17 @@ public class UserRegistrationController {
           produces = MediaType.APPLICATION_JSON_VALUE)
   public ResponseEntity sellStock(@Valid @RequestBody BuyStock buyStock,@RequestParam Map<String,String> params,HttpSession session)
   {
-    String username = (String) session.getAttribute("username");
+    //String username = (String) session.getAttribute("username");
+
+    String username = cookie.getValue();
     buyStock.setUsername(username);
     try {
       userDetailService.stockSell(buyStock);
     }
     catch(InsufficientStocksException e){
+      return new ResponseEntity(e.getMessage(),HttpStatus.FORBIDDEN);
+    }
+    catch(NoSuchStockException e){
       return new ResponseEntity(e.getMessage(),HttpStatus.FORBIDDEN);
     }
     return new ResponseEntity("stock sold succesfully",HttpStatus.ACCEPTED);
@@ -216,7 +221,20 @@ public class UserRegistrationController {
 
 
 
+  @GetMapping(value="/getUserInfo", produces = MediaType.APPLICATION_JSON_VALUE)
+  public ResponseEntity<JsonNode> getUserInfo() throws IOException {
+    JsonNode jsonString;
+    String username =cookie.getValue();
 
+       jsonString = userDetailService.getUserInfo(username);
+
+      System.out.println( " in list stocks ");
+//       for(int i=0;i<jsonString.size();i++)
+//          System.out.println("json String is "+ jsonString.get(i));
+
+    System.out.println("get user");
+    return new ResponseEntity<JsonNode>(jsonString,HttpStatus.ACCEPTED);
+  }
 
 
   @GetMapping(value="/listMyStocks", produces = MediaType.APPLICATION_JSON_VALUE)
@@ -318,6 +336,7 @@ public class UserRegistrationController {
     // Authentication auth = SecurityContextHolder.getContext().getAuthentication();
     HttpSession session = request.getSession(false);
     SecurityContextHolder.clearContext();
+    System.out.println("in logged out");
     session = request.getSession();
     cookie.setMaxAge(0);
     if (session != null) {
