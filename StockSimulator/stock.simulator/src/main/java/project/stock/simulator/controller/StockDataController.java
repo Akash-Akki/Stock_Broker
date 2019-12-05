@@ -17,10 +17,7 @@ import project.stock.simulator.model.Stocks;
 import java.io.*;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Properties;
-import java.util.Random;
+import java.util.*;
 
 @RestController
 public class StockDataController {
@@ -168,15 +165,38 @@ public class StockDataController {
         return json.toString();
     }
 
-    @GetMapping(value = "/monthToDate/{symbol}", produces = MediaType.APPLICATION_JSON_VALUE)
+    @GetMapping(value = "/monthToDate/{symbol}/{month}", produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
-    public String getMonthToDate(@PathVariable("symbol")  String symbol) {
+    public String getMonthToDate(@PathVariable("symbol")  String symbol,@PathVariable("month") String month) {
+
+        month=month.trim();
+        Map<String,Integer> map = new HashMap<>();
+        map.put("Jan",1);
+        map.put("February",2);
+        map.put("March",3);
+        map.put("April",4);
+        map.put("May",5);
+        map.put("June",6);
+        map.put("July",7);
+        map.put("August",8);
+        map.put("September",9);
+        map.put("October",10);
+        map.put("November",11);
+        map.put("December",12);
+
         Gson gson = new Gson();
         Stocks stocks = new Stocks();
         List<SingleStock> list = new ArrayList<SingleStock>();
 
         LocalDate today = new LocalDate();
-        LocalDate firstDay = today.dayOfMonth().withMinimumValue();
+        LocalDate firstDay;
+        if(new LocalDate().getMonthOfYear() < map.get(month)) {
+          firstDay = today.dayOfMonth().withMinimumValue();
+        }
+         else{
+              firstDay = new LocalDate("2019-" + map.get(month) + "-01");
+            }
+
         while(!firstDay.equals(today)) {
 
             if(firstDay.getDayOfWeek() != 6 && firstDay.getDayOfWeek() != 7) {
@@ -209,19 +229,20 @@ public class StockDataController {
         return json.toString();
     }
 
-    @GetMapping(value = "/yearToDate/{symbol}", produces = MediaType.APPLICATION_JSON_VALUE)
+    @GetMapping(value = "/yearToDate/{symbol}/{year}", produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
-    public String getYearToDate(@PathVariable("symbol")  String symbol) {
+    public String getYearToDate(@PathVariable("symbol")  String symbol, @PathVariable("year")  String year) {
+        year = year.trim();
+        LocalDate fromYear = new LocalDate(year+"-01-01");
         Gson gson = new Gson();
         Stocks stocks = new Stocks();
         List<SingleStock> list = new ArrayList<SingleStock>();
 
         LocalDate today = new LocalDate();
-        LocalDate firstDay = today.withWeekOfWeekyear(1);
 
-        while(!firstDay.equals(today)) {
+        while(!fromYear.equals(today)) {
 
-            if(firstDay.getDayOfWeek() != 6 && firstDay.getDayOfWeek() != 7) {
+            if(fromYear.getDayOfWeek() != 6 && fromYear.getDayOfWeek() != 7) {
                 double low = (Math.random() * ((500.0 - 10.0) + 1)) + 10;
                 low = Math.round(low * 100.0) / 100.0;
                 double high = (Math.random() * ((500 - low) + 1)) + low;
@@ -232,7 +253,7 @@ public class StockDataController {
                 close = Math.round(close * 100.0) / 100.0;
                 Random r = new Random();
                 int volume = r.nextInt((100000 - 0) + 1) + 0;
-                String date = String.valueOf(firstDay);
+                String date = String.valueOf(fromYear);
 
                 SingleStock singleStock = new SingleStock();
                 singleStock.setDate(date);
@@ -244,7 +265,7 @@ public class StockDataController {
                 singleStock.setVolume(volume);
                 list.add(singleStock);
             }
-            firstDay = firstDay.plusDays(1);
+            fromYear = fromYear.plusDays(1);
         }
         stocks.setStocksList(list);
         JsonElement json = gson.toJsonTree(stocks);
