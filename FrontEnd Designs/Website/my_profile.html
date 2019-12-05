@@ -60,42 +60,73 @@ $('.dataTables_length').addClass('bs-select');
 			
 	</style>
 	<script>
-	function sell() {
-	  var qntytosell = prompt("Enter stock quantity to sell");
-	  if (qnty != null) {
-		document.getElementById("demo").innerHTML =
-		"Hello " + person + "! How are you today?";
-	  }
-	}
-	$(document).ready(function(){
-			$("form").submit(function( event ) {
-	  var formArray =  $( this ).serializeArray() ;
-	  event.preventDefault();
-	  var returnArray = {};
-	  var finalArray = {};
-	  console.log(formArray);
-	  for (var i = 0; i < formArray.length; i++){
-		returnArray[formArray[i]['name']] = formArray[i]['value'];
-	  }
-	  finalArray = JSON.stringify(returnArray);
-	  console.log(finalArray);
+	    var list = [];
 
+        function constructTable(selector) {
+              var xhttp = new XMLHttpRequest();
+                        xhttp.onreadystatechange = function() {
+                     if (this.readyState == 4 && this.status == 202) {
+                           console.log("response text is "+ this.responseText);
+                       list = JSON.parse(this.responseText);
 
-		var xhttp = new XMLHttpRequest();
-		xhttp.onreadystatechange = function() {
-			 if (this.readyState == 4 && this.status == 200) {
-				 alert(this.responseText);
-			 }
-		};
-		xhttp.open("POST", "https://localhost:9090/addBankAccount", true);
-		xhttp.setRequestHeader("Content-type", "application/json");
-		xhttp.send(finalArray);
+                       //JSON.stringify("list is "+list);
+                       console.log("list length "+list.length);
+                      console.log("obj is "+list[0].symbol);
+                     }
+                };
+                xhttp.open("GET", "https://localhost:9090/getUserProfileInfo", true);
+                //xhttp.setRequestHeader("Content-type", "application/json");
+                xhttp.send();
 
-	  });
-	});
-		   function quantitychkbuy(o)
+            // Getting the all column names
+            var cols = Headers(list, selector);
+            console.log("col is"+cols[0]);
+
+            // Traversing the JSON data
+            for (var i = 0; i < list.length; i++) {
+                var row = $('<tr/>');
+                for (var colIndex = 0; colIndex < cols.length ; colIndex++)
+                {
+                    var val = list[i][cols[colIndex]];
+                       console.log("val is "+ val);
+                    // If there is any key, which is matching
+                    // with the column name
+                    if (val == null) val = "";
+                        row.append($('<td/>').html(val));
+                }
+
+				row.append($('<td/>').html('<button onclick="quantitychksell(this);"> Sell </button>'));
+
+                // Adding each row to the table
+                $(selector).append(row);
+            }
+        }
+
+        function Headers(list, selector) {
+            var columns = [];
+            var header = $('<tr/>');
+
+            for (var i = 0; i < list.length; i++) {
+                var row = list[i];
+
+                for (var k in row) {
+                    if ($.inArray(k, columns) == -1) {
+                        columns.push(k);
+
+                        // Creating the header
+                        header.append($('<th/>').html(k));
+                    }
+
+                }
+            }
+
+            // Appending the header to the table
+            $(selector).append(header);
+                return columns;
+        }
+        function quantitychksell(o)
 			   {
-					var numberOfUnits = prompt("Enter stock quantity to buy");
+					var numberOfUnits = prompt("Enter stock quantity to sell");
 					if(numberOfUnits != null){
 					var p = o.parentNode.parentNode;
 					var symbol = p.firstChild.innerHTML;
@@ -111,153 +142,12 @@ $('.dataTables_length').addClass('bs-select');
 							 console.log(this.responseText);
 							}
 						};
-					xhttp.open("POST", "https://localhost:9090/buy", true);
+					xhttp.open("POST", "https://localhost:9090/sell", true);
 					xhttp.setRequestHeader("Content-type", "application/json");
 					xhttp.send(myJSON);
 					}
 					}
 			   }
-          
-        var list = [];
-
-              
-        function constructTable(selector) { 
-              var xhttp = new XMLHttpRequest();
-			xhttp.onreadystatechange = function() {
-         if (this.readyState == 4 && this.status == 202) {
-               console.log("response text is "+ this.responseText);
-           list = JSON.parse(this.responseText);
-
-           //JSON.stringify("list is "+list);
-           console.log("list length "+list.length);
-          console.log("obj is "+list[0].symbol);
-         }
-    };
-    xhttp.open("GET", "https://localhost:9090/listStocks", true);
-    //xhttp.setRequestHeader("Content-type", "application/json");
-    xhttp.send();
-            // Getting the all column names 
-            var cols = Headers(list, selector);   
-            console.log("col is"+cols[0]);
-
-            // Traversing the JSON data 
-            for (var i = 0; i < list.length; i++) { 
-                var row = $('<tr/>');    
-                for (var colIndex = 0; colIndex < cols.length ; colIndex++) 
-                { 
-                    var val = list[i][cols[colIndex]];
-                       console.log("val is "+ val);
-                    // If there is any key, which is matching 
-                    // with the column name 
-                    if (val == null) val = "";   
-                        row.append($('<td/>').html(val)); 
-                } 
-				
-				row.append($('<td/>').html('<button onclick="quantitychkbuy(this);"> Buy </button>'));
-                  
-                // Adding each row to the table 
-                $(selector).append(row); 
-            } 
-        } 
-          
-
-var x;
-  var list1;
-		function constructTable2(selector) {
-
-              var xhttp = new XMLHttpRequest();
-			xhttp.onreadystatechange = function() {
-         if (this.readyState == 4 && this.status == 202) {
-               console.log("response text is "+ this.responseText);
-           list1 = JSON.parse(this.responseText);
-           //JSON.stringify("list1 is "+list1);
-          // console.log("list1 length "+list1.length);
-          console.log("obj is "+list1.symbol);
-          x=list1.symbol;
-          console.log(" x is "+x);
-
-         }
-    };
-    xhttp.open("GET", "https://localhost:9090/getUserProfileInfo", true);
-    //xhttp.setRequestHeader("Content-type", "application/json");
-    xhttp.send();
-            // Getting the all column names
-
-  var table = document.getElementById("myTable");
-  //var x=document.createTextNode("new cell");
- // var row = table.insertRow.append(list.symbol);
-   var tr1= document.getElementById("tr1")
-   var tr2 = document.getElementById("tr2");
-   var tr3 = document.getElementById("tr2");
-   var tr4 = document.getElementById("tr2");
-
-    //console.log("obj is "+list1.symbol);
-
-   console.log("x is "+x);
-   tr1.innerHTML=list1.symbol;
-   tr2.innerHTML=list1.company_name;
-   tr3.innerHTML=list1.quantity;
-   tr4.innerHTML=list1.netWorth;
-    //document.getElementById("tr2").appendChild(x);
-    //document.getElementById("tr3").appendChild(x);
-
-
-
-
-
-
-   }
-
-var list2=[];
-  function sell(){
-
-
-              var xhttp = new XMLHttpRequest();
-			xhttp.onreadystatechange = function() {
-         if (this.readyState == 4 && this.status == 202) {
-               console.log("response text is "+ this.responseText);
-           list2 = JSON.parse(this.responseText);
-           //JSON.stringify("list2 is "+list2);
-           console.log("list2 length "+list2.length);
-          console.log("obj is "+list2[0].symbol);
-          x=list2.symbol;
-          console.log(" x is "+x);
-
-         }
-    };
-    xhttp.open("GET", "https://localhost:9090/listMyStocks", true);
-    //xhttp.setRequestHeader("Content-type", "application/json");
-    xhttp.send();
-                       var tr1= document.getElementById("td1")
-                       var tr2 = document.getElementById("td2");
-                       var tr3 = document.getElementById("td3");
-                       var tr4 = document.getElementById("td4");
-         for (var i = 0; i < list.length; i++) {
-                var row = $('<tr/>');
-                      var val = list[i][cols[colIndex]];
-<!--                       console.log("val is "+ val);-->
-<!--                    // If there is any key, which is matching -->
-<!--                    // with the column name -->
-<!--                    if (val == null) val = "";   -->
-<!--                        row.append($('<td/>').html(val)); -->
-
-                        console.log("list2 symbol "+list2[i].symbol);
-                       trd1.innerHTML=list2[i].symbol;
-                       td2.innerHTML=list2[i].company;
-                       td3.innerHTML=list2[i].quantity;
-
-                  	row.append($('<td/>').html('<button onclick="quantitychkbuy(this);"> Buy </button>'));
-                }
-
-			
-
-                // Adding each row to the table
-                $(selector).append(row);
-            }
-
-
-
-  
 </script>
 </head>
 
@@ -275,38 +165,9 @@ var list2=[];
 	</nav>
 </div>
 <br><br><br><br>
-<div>
 <div style="text-align: center;">
-<button id="myprofileinfo" onclick="constructTable2('#myinfo');" align="center"> My Profile Info</button>
-</div>
 <br><br>
     <br><br>
-    <table class="myTable">
-        <thead>
-        <tr>
-            <th scope="col">#</th>
-            <th scope="col">Symbol</th>
-            <th scope="col">Company Name</th>
-            <th scope="col">Quantity</th>
-        </tr>
-        </thead>
-        <tbody>
-        <tr>
-            <th scope="row">1</th>
-            <td id="tr1"></td>
-            <td id="tr2"></td>
-            <td id="tr3"></td>
-            <td id="tr4"></td>
-        </tr>
-        </tbody>
-        </table>
-
-<br><br>
-    <br><br>
-
-
-
-
 
 
     <table id="dtBasicExample" class="table table-hover table-bordered table-sm " cellspacing="0" width="100%"
@@ -321,11 +182,11 @@ var list2=[];
     <tr>
       <th class="th-sm">
       </th>
-      <th class="th-sm">Order Description
+      <th class="th-sm">Symbol
       </th>
-      <th class="th-sm">Order Delivery Date
+      <th class="th-sm">Company Name
       </th>
-      <th class="th-sm">Order Total Price
+      <th class="th-sm">Quantity
       </th>
 	  <th class="th-sm">Sell
       </th>
@@ -337,49 +198,25 @@ var list2=[];
       <td id="td2"></td>
       <td id="td3"></td>
       <td id="td4"></td>
-	  <td><input type='button' value='Sell' onclick="sell();"/></td>
+	  <td><input type='button' value='Sell' /></td>
     </tr>
   </tbody>
  </table>
  
  <br><br>
- 
-<div style="text-align: center;">
-<br/><br/>
-<div class="container">
-            <div class="signup-content">
-                <div class="signup-form">
-                    <h2 class="form-title">Add Bank Account Information</h2>
-                    <form method="POST" class="register-form" id="register-form"  action="">
-						<div class="form-group">
-                            <label for="email"><i class="zmdi zmdi-email">Account Number</i></label>
-                            <input type="text" name="accountnumber" id="accountnumber" placeholder="Your account number"/>
-                        </div>
-                        <div class="form-group">
-                            <label for="name"><i class="zmdi zmdi-account material-icons-name">Routing Number</i></label>
-                            <input type="text" name="routingnumber" id="routingnumber" placeholder="bank routing number"/>
-                        </div>
-                        <div class="form-group">
-                            <label for="address"><i class="zmdi zmdi-pin animated infinite wobble zmdi-hc-fw">Balance</i></label>
-                            <input id="balance" name="balance" placeholder="Balance" type="text"/>
-                        </div>
-						<div class="form-group form-button">
-                            <input type="submit" name="addbankinfo" id="bankinfo" class="form-submit" value="Add"/>
-                        </div>
-                    </form>
-                </div>
-				</div>
-</div>
 
-</div> 
- <div>
-<p id = "GFG_UP" style =  "margin-top: 25px;font-size: 15px; font-weight: bold;"></p> 
-<br><br>
-<button onclick = "constructTable('#tablestk');"> View Stock Information</button>
-<br><br> 
-<table align = "center" id="tablestk" border="1">
-</table>
-<br><br>
+
+    <div  style="text-align:center">
+    <a href="try.html"><button>Add Bank Information</button></a>
+    <a href="bank_Transfer.html"><button>Bank Transfer</button></a>
+
+    <br><br>
+    <!--button onclick = "constructTable('#tablestk');"> View Stock Information</button>
+    <br><br>
+    <table align = "center" id="tablestk" border="1">
+    </table>
+    <br><br>
+    </div-->
 </div>
 </div>
 </body>
