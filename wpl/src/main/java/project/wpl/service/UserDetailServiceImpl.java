@@ -15,6 +15,8 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import org.joda.time.LocalDate;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -22,6 +24,7 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.client.RestTemplate;
 import project.wpl.exception.*;
 import project.wpl.model.*;
 import project.wpl.repository.*;
@@ -236,6 +239,7 @@ public class UserDetailServiceImpl implements UserDetailsService {
               //change this code to call from another sever using rest-template
 
               stockPrice=currentValue(symbol);
+               System.out.println("stockPrice "+stockPrice);
               totalStockPrice =stockPrice*byUsername.get(i).getQuantity();
               userDetailOutput.setNetWorth(totalStockPrice);
               userDetailOutput.setQuantity(byUsername.get(i).getQuantity());
@@ -331,39 +335,15 @@ public class UserDetailServiceImpl implements UserDetailsService {
 
     public double currentValue(String symbol){
         String output = "";
-        double stockValue = 0.0;
-        try {
-            URL url = new URL("https://www.alphavantage.co/query?function=TIME_SERIES_DAILY&symbol="+symbol+"&apikey=YNNNXAMXZNPWGTUD");
+        double stockValue;
 
-            HttpURLConnection con = (HttpURLConnection) url.openConnection();
-            con.setRequestMethod("GET");
-            con.setRequestProperty("Accept", "application/json");
-            con.setDoOutput(true);
-            int code = con.getResponseCode();
-          //  System.out.println(code);
-            BufferedReader in = new BufferedReader(
-                    new InputStreamReader(con.getInputStream()));
-            String inputLine;
-            StringBuffer content = new StringBuffer();
-            while ((inputLine = in.readLine()) != null) {
-                content.append(inputLine);
-            }
-            in.close();
-            output = content.toString();
-            JsonParser parser = new JsonParser();
-            JsonObject jsonObject = parser.parse(output).getAsJsonObject();
-            LocalDate today = new LocalDate();
-            if(today.getDayOfWeek() == 6)
-                today = today.minusDays(1);
-            else if(today.getDayOfWeek() == 7)
-                today = today.minusDays(2);
+            final String uri = "http://localhost:9093/currentValue/"+symbol;
 
-            stockValue = jsonObject.get("Time Series (Daily)").getAsJsonObject().get(today.toString()).getAsJsonObject().get("4. close").getAsDouble();
-            //json = jsonObject.toString();
-        }catch (Exception e){
+            RestTemplate restTemplate = new RestTemplate();
+             stockValue = restTemplate.getForObject(uri, Double.class);
 
-        }
 
+        System.out.println("stock value "+stockValue);
         return stockValue;
     }
 
