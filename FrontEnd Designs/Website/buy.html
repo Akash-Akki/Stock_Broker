@@ -123,11 +123,13 @@
 					var xhttp = new XMLHttpRequest();
 					xhttp.onreadystatechange = function() {
 						 if (this.readyState == 4 && this.status == 202) {
-							 alert(this.responseText);
+							 alert("Successful Buy");
                              console.log("in response success");
                             window.location.replace("my_profile.html");
                              //location.reload(true);
 							}
+							else
+							alert("Failed Buy");
 						};
 					xhttp.open("POST", "https://localhost:9090/buy", true);
 					xhttp.setRequestHeader("Content-type", "application/json");

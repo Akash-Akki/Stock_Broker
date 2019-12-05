@@ -76,9 +76,12 @@ $(document).ready(function(){
     var xhttp = new XMLHttpRequest();
     xhttp.onreadystatechange = function() {
          if (this.readyState == 4 && this.status == 200) {
+             alert("Reset Successfully");
              console.log(this.responseText);
 			 window.location.href='login.html';
          }
+         else
+         alert("Reset Failed");
     };
     xhttp.open("PUT", "https://localhost:9090/resetPassword", true);
     xhttp.setRequestHeader("Content-type", "application/json");

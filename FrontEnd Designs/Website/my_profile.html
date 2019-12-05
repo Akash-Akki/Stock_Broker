@@ -173,10 +173,12 @@
 					var xhttp = new XMLHttpRequest();
 					xhttp.onreadystatechange = function() {
 						 if (this.readyState == 4 && this.status == 202) {
-							 alert(this.responseText);
+							 alert("Sold successfully");
                              console.log("in response success");
                              location.reload(true);
 							}
+							else
+							alert("Sell Failed ! Please try again.");
 						};
 					xhttp.open("POST", "https://localhost:9090/sell", true);
 					xhttp.setRequestHeader("Content-type", "application/json");
@@ -213,18 +215,20 @@
             var xhttp = new XMLHttpRequest();
              xhttp.onreadystatechange = function() {
 						 if (this.readyState == 4 && this.status == 202) {
-//							 alert(this.responseText);
+//							 alert("Logged Out Successfully");
                              console.log("in response success");
                              window.location.href='firstpage.html';
 							}
+							else
+							alert("Failed logging out+"this.status);
 						};
 					xhttp.open("GET", "https://localhost:9090/customlogout", true);
 					//xhttp.setRequestHeader("Content-type", "application/json");
 					xhttp.send();
                          
  }
-            
-        
+
+
 </script>
 </head>
 
