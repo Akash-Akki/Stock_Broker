@@ -99,6 +99,9 @@ public class UserRegistrationController {
   public ResponseEntity updateDataSet(@Valid @RequestBody UserRegistry userRegistry,
       @RequestParam Map<String, String> params, HttpSession session) throws Exception {
     // System.out.println("size " + params.size());
+    if(cookie == null){
+      throw new SessionNotFoundException("User Not logged in");
+    }
     String username = (String) session.getAttribute("username");
 
     try {
@@ -123,7 +126,9 @@ public class UserRegistrationController {
       produces = MediaType.APPLICATION_JSON_VALUE)
   public ResponseEntity addBankAccount(@Valid @RequestBody BankAccount bankAccount,
       @RequestParam Map<String, String> params, HttpSession session) throws Exception {
-    //String username = (String) session.getAttribute("username");
+    if(cookie == null){
+      throw new SessionNotFoundException("User Not logged in");
+    }
     String username= cookie.getValue();
     System.out.println("usernaem is "+username);
     System.out.println("in add account");
@@ -162,7 +167,10 @@ public class UserRegistrationController {
           produces = MediaType.APPLICATION_JSON_VALUE)
   public ResponseEntity buyStock(@Valid @RequestBody BuyStock buyStock,@RequestParam Map<String,String> params,HttpSession session) throws InvalidAccountNumberException {
     //String username = (String) session.getAttribute("username");
-     String username = cookie.getValue();
+    if(cookie == null){
+      throw new SessionNotFoundException("User Not logged in");
+    }
+    String username = cookie.getValue();
     System.out.println("username in controller is " + username);
 
      buyStock.setUsername(username);
@@ -244,6 +252,9 @@ public class UserRegistrationController {
   @GetMapping(value="/getUserProfileInfo")
   public ResponseEntity getUserProfileInfo(@RequestParam Map<String,String> params,HttpSession session) throws IOException {
     //String username = (String) session.getAttribute("username");
+    if(cookie==null){
+      throw new SessionNotFoundException("User Not logged in");
+    }
     String username= cookie.getValue();
     List<JsonNode> jsonNodeList =new ArrayList<JsonNode>();
     try {
