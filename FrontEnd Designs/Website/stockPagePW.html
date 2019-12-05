@@ -65,24 +65,19 @@
 	</style>
     <script src= "https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"> </script>
     <script>
-            /*function checkValue()
+            function checkValue()
             {
-                var table = document.getElementById('table'),
-                selected = table.getElementsByClassName('selected');
-                table.onclick = highlight;
-                function highlight(e) {
-                    if (selected[0]) selected[0].className = '';
-                    e.target.parentNode.className = 'selected';
-
-                var $row=$(this).parent().find('td');
-                    var clickeedID=$row.eq(0).text();
-                    alert(clickeedID);
+                  $("#table tr").click(function(){
+                  $(this).addClass('selected').siblings().removeClass('selected');
+                  var value=$(this).find('td:first').html();
+                  alert(value);
+                  });
 
                 var e = document.getElementById("month");
                 var  monthselected = e.options[e.selectedIndex].value;
                 console.log(monthselected);
 
-            }*/
+            }
 
           //var list;
                         var list = [];
@@ -187,7 +182,7 @@
 <button id="checkVal" value="OK" onclick="checkValue()">Submit
     </button>
 <table align = "center"
-       id="table" border="1" class="selected">
+       id="table" border="1" >
 </table>
 
 <br><br>
