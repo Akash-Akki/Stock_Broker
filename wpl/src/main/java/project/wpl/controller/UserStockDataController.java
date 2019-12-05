@@ -1,5 +1,7 @@
 package project.wpl.controller;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.gson.Gson;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
@@ -7,7 +9,9 @@ import com.google.gson.JsonParser;
 import org.joda.time.LocalDate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.RestTemplate;
 //import project.wpl.kafka.Sender;
@@ -39,35 +43,28 @@ public class UserStockDataController {
 
     @GetMapping(value = "/currentPrice/{symbol}", produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
-    public double currentValue(@PathVariable("symbol") String symbol){
+    public ResponseEntity currentValue(@PathVariable("symbol") String symbol){
 
         final String uri = "http://localhost:9093/currentValue/"+symbol;
 
         RestTemplate restTemplate = new RestTemplate();
         double result = restTemplate.getForObject(uri, Double.class);
-        return result;
+        return new ResponseEntity(result,HttpStatus.ACCEPTED);
     }
 
     @Cacheable(value = "pastweek", key = "#symbol")
     @GetMapping(value = "/pastWeek/{symbol}", produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
-    public String getPastWeekData(@PathVariable("symbol") String symbol){
-         String result = "";
-       // String stockBySymbol = stocksService.getStockBySymbol(symbol);
-        String stockBySymbol = "";
-           System.out.println("json result"+stockBySymbol);
+    public ResponseEntity getPastWeekData(@PathVariable("symbol") String symbol){
 
-        if(stockBySymbol=="") {
             System.out.println("In if loop");
             final String uri = "http://localhost:9093/pastWeek/" + symbol;
             RestTemplate restTemplate = new RestTemplate();
-            result = restTemplate.getForObject(uri, String.class);
+           String result = restTemplate.getForObject(uri, String.class);
 
          //   stocksService.updateStock(result,symbol);
-            return result;
-        }
-        else
-            return stockBySymbol;
+            return new ResponseEntity(result,HttpStatus.ACCEPTED);
+
     }
 
     @GetMapping(value = "/currentWeek/{symbol}", produces = MediaType.APPLICATION_JSON_VALUE)
@@ -92,24 +89,24 @@ public class UserStockDataController {
 
     @GetMapping(value = "/monthToDate/{symbol}", produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
-    public String getMonthToDate(@PathVariable("symbol") String symbol){
+    public ResponseEntity getMonthToDate(@PathVariable("symbol") String symbol){
+          ObjectMapper objectMapper = new ObjectMapper();
+          final String uri = "http://localhost:9093/monthToDate/" + symbol;
+          RestTemplate restTemplate = new RestTemplate();
+          String result = restTemplate.getForObject(uri, String.class);
+        //  System.out.println("outpu "+ result);
 
-        final String uri = "http://localhost:9093/monthToDate/"+symbol;
-        RestTemplate restTemplate = new RestTemplate();
-        String result = restTemplate.getForObject(uri, String.class);
-
-
-        return result;
+        return new ResponseEntity(result, HttpStatus.ACCEPTED);
     }
 
     @GetMapping(value = "/yearToDate/{symbol}", produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
-    public String getYearToDate(@PathVariable("symbol") String symbol){
+    public ResponseEntity getYearToDate(@PathVariable("symbol") String symbol){
 
         final String uri = "http://localhost:9093/yearToDate/"+symbol;
         RestTemplate restTemplate = new RestTemplate();
         String result = restTemplate.getForObject(uri, String.class);
-        return result;
+        return new ResponseEntity(result, HttpStatus.ACCEPTED);
     }
 
     @GetMapping(value = "/fiveYear/{symbol}", produces = MediaType.APPLICATION_JSON_VALUE)
