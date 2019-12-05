@@ -65,7 +65,7 @@
 	</style>
     <script src= "https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"> </script>
     <script>
-            function checkValue()
+            /*function checkValue()
             {
                 var table = document.getElementById('table'),
                 selected = table.getElementsByClassName('selected');
@@ -82,7 +82,7 @@
                 var  monthselected = e.options[e.selectedIndex].value;
                 console.log(monthselected);
 
-            }
+            }*/
 
           //var list;
                         var list = [];
@@ -90,17 +90,8 @@
                       var xhttp = new XMLHttpRequest();
                     xhttp.onreadystatechange = function() {
                  if (this.readyState == 4 && this.status == 202) {
-                       console.log("response text is "+ this.responseText);
-                   list = JSON.parse(this.responseText);
-                   //JSON.stringify("list is "+list);
-                   console.log("list length "+list.length);
-                  console.log("obj is "+list[0].symbol);
-                 }
-            };
-            xhttp.open("GET", "https://localhost:9090/listStocks", true);
-            //xhttp.setRequestHeader("Content-type", "application/json");
-            xhttp.send();
-                    // Getting the all column names
+                  // Getting the all column names
+                  list = JSON.parse(this.responseText);
                     var cols = Headers(list, selector);
 
                     // Traversing the JSON data
@@ -121,6 +112,17 @@
                         // Adding each row to the table
                         $(selector).append(row);
                     }
+                       console.log("response text is "+ this.responseText);
+
+                   //JSON.stringify("list is "+list);
+                   console.log("list length "+list.length);
+                  console.log("obj is "+list[0].symbol);
+                 }
+            };
+            xhttp.open("GET", "https://localhost:9090/listStocks", true);
+            //xhttp.setRequestHeader("Content-type", "application/json");
+            xhttp.send();
+
                 }
 
                 function quantitychk(o)
@@ -181,8 +183,9 @@
     <option value="October"> October </option>
     <option value="November"> November </option>
     <option value="December"> December </option>
-</select>>
-<input type="button" id="checkVal" value="OK" onclick="checkValue()" />
+</select>
+<button id="checkVal" value="OK" onclick="checkValue()">Submit
+    </button>
 <table align = "center"
        id="table" border="1" class="selected">
 </table>
