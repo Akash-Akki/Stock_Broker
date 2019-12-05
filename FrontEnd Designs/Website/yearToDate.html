@@ -89,6 +89,8 @@
 				console.log(myJSON);*/
 
                 var xhttp = new XMLHttpRequest();
+                  var year = document.getElementById("month").value;
+                console.log("year is "+year);
                 xhttp.onreadystatechange = function() {
                      if (this.readyState == 4 && this.status == 202)
                      {
@@ -129,7 +131,7 @@
                       }
 
                 };
-                xhttp.open("GET", "https://localhost:9090/yearToDate/"+value, true);
+                xhttp.open("GET", "https://localhost:9090/yearToDate/"+value+"/"+month, true);
                 xhttp.setRequestHeader("Content-type", "application/json");
                 xhttp.send();
             }

@@ -11,7 +11,6 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.google.gson.Gson;
 import com.google.gson.JsonElement;
@@ -25,7 +24,6 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import project.wpl.exception.*;
@@ -351,7 +349,7 @@ catch (InsufficientStocksException e)
 
 
   @GetMapping(value = "/customlogout")
-  public String logoutPage(HttpServletRequest request, HttpServletResponse response) {
+  public ResponseEntity logoutPage(HttpServletRequest request, HttpServletResponse response) {
     // Authentication auth = SecurityContextHolder.getContext().getAuthentication();
     HttpSession session = request.getSession(false);
     SecurityContextHolder.clearContext();
@@ -360,10 +358,10 @@ catch (InsufficientStocksException e)
     cookie.setMaxAge(0);
     if (session != null) {
       session.invalidate();
-      return "logged out";
+      return new ResponseEntity("logged out",HttpStatus.ACCEPTED);
     }
 
-    return "error";
+    return new ResponseEntity("error",HttpStatus.FORBIDDEN);
 
   }
 
