@@ -4,20 +4,39 @@
 <title>FULLSTACKROVERS Profile</title>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<link rel="stylesheet" href="https://cdn.datatables.net/1.10.20/css/dataTables.bootstrap.min.css">
-<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
-<script src="https://code.jquery.com/jquery-3.3.1.js"></script>
-<script src="https://cdn.datatables.net/1.10.20/js/jquery.dataTables.min.js"></script>
-<script src="https://cdn.datatables.net/1.10.20/js/dataTables.bootstrap.min.js"></script>
-<!--script src= "https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"> </script-->
-<script>
-$(document).ready(function () {
-$('#dtBasicExample').DataTable();
-$('.dataTables_length').addClass('bs-select');
-});
-</script>
+
+    <!-- Font Icon -->
+    <link rel="stylesheet" href="fonts/material-icon/css/material-design-iconic-font.min.css">
+
+    <!-- Main css -->
+    <link rel="stylesheet" href="css/style.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    <script src="https://www.w3schools.com/lib/w3.js"></script>
+    
+
 <style>
 
+    
+    
+    
+    
+    
+    #t01, #th, #td1 ,#td2 ,#td3 {
+  border: 1px solid black;
+  border-collapse: collapse;
+}
+#th, #td {
+  padding: 15px;
+  text-align: left;
+}
+#t01 {
+  width: 50%;    
+  background-color: white;
+}
+    
+    
+    
+    
 			header {
 			   top: 5px;
 			   position:absolute;
@@ -28,7 +47,7 @@ $('.dataTables_length').addClass('bs-select');
 		  display: inline;
 		  overflow: hidden;
 		  background-color: none;
-		  position: fixed;
+		 
 		  top: 0px;
 		  width: 100%;
 		  right: 150px;
@@ -61,75 +80,89 @@ $('.dataTables_length').addClass('bs-select');
 	</style>
 	<script>
 	    var list = [];
-
-        function constructTable(selector) {
+        
+        
+               function constructTable(selector) { 
               var xhttp = new XMLHttpRequest();
-                        xhttp.onreadystatechange = function() {
-                     if (this.readyState == 4 && this.status == 202) {
-                           console.log("response text is "+ this.responseText);
-                       list = JSON.parse(this.responseText);
+			xhttp.onreadystatechange = function() {
+         if (this.readyState == 4 && this.status == 202) {
+               console.log("response text is "+ this.responseText);
+           list = JSON.parse(this.responseText);
+           //JSON.stringify("list is "+list);
+           console.log("list length "+list.length);
+          console.log("obj is "+list[0].symbol);
+             
+        
+                         var cols = Headers(list, selector);
 
-                       //JSON.stringify("list is "+list);
-                       console.log("list length "+list.length);
-                      console.log("obj is "+list[0].symbol);
-                     }
-                };
-                xhttp.open("GET", "https://localhost:9090/getUserProfileInfo", true);
-                //xhttp.setRequestHeader("Content-type", "application/json");
-                xhttp.send();
-
-            // Getting the all column names
-            var cols = Headers(list, selector);
-            console.log("col is"+cols[0]);
-
-            // Traversing the JSON data
-            for (var i = 0; i < list.length; i++) {
-                var row = $('<tr/>');
-                for (var colIndex = 0; colIndex < cols.length ; colIndex++)
-                {
-                    var val = list[i][cols[colIndex]];
-                       console.log("val is "+ val);
-                    // If there is any key, which is matching
-                    // with the column name
-                    if (val == null) val = "";
-                        row.append($('<td/>').html(val));
-                }
-
+            // Traversing the JSON data 
+            for (var i = 0; i < list.length; i++) { 
+                var row = $('<tr/>');  
+                
+                  row.addClass("item");
+                for (var colIndex = 0; colIndex < cols.length ; colIndex++) 
+                { 
+                    var val = list[i][cols[colIndex]]; 
+                      
+                    // If there is any key, which is matching 
+                    // with the column name 
+                    if (val == null) val = "";   
+                        row.append($('<td/>').html(val)); 
+                } 
+				
 				row.append($('<td/>').html('<button onclick="quantitychksell(this);"> Sell </button>'));
+                  
+                // Adding each row to the table 
+                $(selector).append(row); 
+            } 
+          
+             
+         }
+    };
+    xhttp.open("GET", "https://localhost:9090/getUserProfileInfo", true);
+    //xhttp.setRequestHeader("Content-type", "application/json");
+    xhttp.send();
+            // Getting the all column names 
 
-                // Adding each row to the table
-                $(selector).append(row);
-            }
-        }
+        } 
+          
+		function quantitychk(o)
+	   {
+			
+	   }
+        
 
-        function Headers(list, selector) {
-            var columns = [];
-            var header = $('<tr/>');
+    function Headers(list, selector) { 
+            var columns = []; 
+            var header = $('<tr/>'); 
+              
+            for (var i = 0; i < list.length; i++) { 
+                var row = list[i]; 
+                  
+                for (var k in row) { 
+                    if ($.inArray(k, columns) == -1) { 
+                        columns.push(k); 
+                          
+                        // Creating the header 
+                       // header.append($('<th/>').html(k)); 
+                    } 
+					
+                } 
+            } 
+              
+            // Appending the header to the table 
+            $(selector).append(header); 
+                return columns; 
+        } 
 
-            for (var i = 0; i < list.length; i++) {
-                var row = list[i];
 
-                for (var k in row) {
-                    if ($.inArray(k, columns) == -1) {
-                        columns.push(k);
-
-                        // Creating the header
-                        header.append($('<th/>').html(k));
-                    }
-
-                }
-            }
-
-            // Appending the header to the table
-            $(selector).append(header);
-                return columns;
-        }
         function quantitychksell(o)
 			   {
+                    console.log("in sell")
 					var numberOfUnits = prompt("Enter stock quantity to sell");
 					if(numberOfUnits != null){
 					var p = o.parentNode.parentNode;
-					var symbol = p.firstChild.innerHTML;
+					var symbol = p.childNodes[1].innerHTML;
 					var company_name = symbol;
 					var accountNumber = prompt("Enter the Bank Account number");
 					if(accountNumber != null){
@@ -138,46 +171,69 @@ $('.dataTables_length').addClass('bs-select');
 					console.log(myJSON);
 					var xhttp = new XMLHttpRequest();
 					xhttp.onreadystatechange = function() {
-						 if (this.readyState == 4 && this.status == 200) {
-							 console.log(this.responseText);
+						 if (this.readyState == 4 && this.status == 202) {
+							 alert(this.responseText);
+                             console.log("in response success");
+                             location.reload(true);
 							}
 						};
 					xhttp.open("POST", "https://localhost:9090/sell", true);
 					xhttp.setRequestHeader("Content-type", "application/json");
 					xhttp.send(myJSON);
+                         
 					}
 					}
 			   }
+         
+        var userObj;
         
-        function customlogout(){
+        function userTable(selector){
+              console.log("in user table");
+             var xhttp = new XMLHttpRequest();
+			xhttp.onreadystatechange = function() {
+         if (this.readyState == 4 && this.status == 202) {
+               console.log("response text is "+ this.responseText);
+           userObj = JSON.parse(this.responseText);
+            td1.innerHTML=userObj.username;
+            td2.innerHTML=userObj.email;
+            td3.innerHTML=userObj.address;
+                
+        };
+     }
+                xhttp.open("GET", "https://localhost:9090/getUserInfo", true);
+					//xhttp.setRequestHeader("Content-type", "application/json");
+					xhttp.send();
             
-              var cookie= document.cookie.get;
-            console.log("cookie "+cookie);
+            }
+        
+        
+        
+        function logout(){
             var xhttp = new XMLHttpRequest();
-					xhttp.onreadystatechange = function() {
-						 if (this.readyState == 4 && this.status == 200) {
-							 console.log(this.responseText);
-                             window.location.href="firstpage.html";
-                             
+             xhttp.onreadystatechange = function() {
+						 if (this.readyState == 4 && this.status == 202) {
+//							 alert(this.responseText);
+                             console.log("in response success");
+                             window.location.href='firstpage.html';
 							}
 						};
 					xhttp.open("GET", "https://localhost:9090/customlogout", true);
 					//xhttp.setRequestHeader("Content-type", "application/json");
 					xhttp.send();
+                         
+ }
             
-        }
         
 </script>
 </head>
 
-<body class="container-fluid">
+<body class="container-fluid" onload="constructTable('#table'); userTable('#t01');">
 <header>
-<img src="images/mycomp1.jpg" alt="Logo" style="height:40px"></img>
+<img src="images/mycomp1.jpg" alt="Logo" style="height:40px">
 </header>
 <div id="firstsec">
 	<nav class="sidenav">
-    <a href="#" onclick="customlogout()">Sign Out</a><br />
-	<a href="login.html" >Sign in</a>
+    <a href="#" onclick="logout();">Sign Out</a>
 	<a href="about.html" >About</a>
 	<a href="stockPage.html" >StockPage</a>
 	<a href="my_profile.html" >My Profile</a>
@@ -189,39 +245,62 @@ $('.dataTables_length').addClass('bs-select');
 <br><br>
     <br><br>
 
+    
+    
+<table id="t01" align="center" width="10%">
+  <tr id="tr">
+    <th id="th">Username</th>
+    <th id="th">Email</th> 
+    <th id="th">Address</th>
+  </tr>
+  <tr id="tr">
+    <td id="td1"></td>
+    <td id="td2"></td>
+    <td id="td3"></td>
+  </tr>
+ 
+</table>
+    <br><br>
+    <br><br>
+    
 
-    <table id="dtBasicExample" class="table table-hover table-bordered table-sm " cellspacing="0" width="100%"
-			 data-toggle="table"
-			 data-search="true"
-			 data-filter-control="true" 
-			 data-show-export="true"
-			 data-click-to-select="true"
-			 data-toolbar="#toolbar"
-       class="table-responsive">
+
+    
+    <table align = "center" id="table" border="1">
+  <tr>
+    <th onclick="w3.sortHTML('#table', '.item', 'td:nth-child(1)')" style="cursor:pointer">Company Name</th>
+    <th onclick="w3.sortHTML('#table', '.item', 'td:nth-child(2)')" style="cursor:pointer">Symbol</th>
+          <th onclick="w3.sortHTML('#table', '.item', 'td:nth-child(2)')" style="cursor:pointer">Quantity</th>
+          <th onclick="w3.sortHTML('#table', '.item', 'td:nth-child(2)')" style="cursor:pointer">Net Worth</th>
+  </tr>
+
+</table>
+    
+    
+<!--
+    <table id="example" class="table table-hover table-bordered table-sm " cellspacing="0" width="100%">
+
   <thead>
     <tr>
-      <th class="th-sm">
+      <th class="th-sm"> Company Name
       </th>
       <th class="th-sm">Symbol
       </th>
-      <th class="th-sm">Company Name
-      </th>
       <th class="th-sm">Quantity
       </th>
-	  <th class="th-sm">Sell
+      <th class="th-sm">Net Worth
+
       </th>
+	  
     </tr>
+    
   </thead>
+        
   <tbody>
-    <tr id="row1">
-      <td id="td1"></td>
-      <td id="td2"></td>
-      <td id="td3"></td>
-      <td id="td4"></td>
-	  <td><input type='button' value='Sell' /></td>
-    </tr>
-  </tbody>
- </table>
+    </tbody>
+</table>
+-->
+ 
  
  <br><br>
 
@@ -229,7 +308,7 @@ $('.dataTables_length').addClass('bs-select');
     <div  style="text-align:center">
     <a href="try.html"><button>Add Bank Information</button></a>
     <a href="bank_Transfer.html"><button>Bank Transfer</button></a>
-
+    <a href="buy.html"><button>Buy</button></a>
     <br><br>
     <!--button onclick = "constructTable('#tablestk');"> View Stock Information</button>
     <br><br>
