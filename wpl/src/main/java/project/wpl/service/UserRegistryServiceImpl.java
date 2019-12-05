@@ -38,10 +38,10 @@ public class UserRegistryServiceImpl {
 
   public void createNewUser(@Valid UserRegistry userRegistry) {
     validate(userRegistry);
-    System.out.println("in service");
+    //System.out.println("in service");
     userRegistry.setPasswd(bCryptPasswordEncoder.encode(userRegistry.getPasswd()));
     userRegistry.setRoles(new HashSet<>(roleRepository.findAll()));
-    System.out.println("Saving user");
+    //System.out.println("Saving user");
     registrationRepository.save(userRegistry);
   }
 

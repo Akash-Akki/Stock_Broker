@@ -5,6 +5,8 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import org.joda.time.LocalDate;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.http.MediaType;
@@ -37,6 +39,8 @@ public class UserStockDataController {
 //    @Autowired
 //    Sender kafkaProducer;
 
+    Logger logger = LoggerFactory.getLogger(UserStockDataController.class);
+
     @GetMapping(value = "/currentPrice/{symbol}", produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
     public double currentValue(@PathVariable("symbol") String symbol){
@@ -54,26 +58,23 @@ public class UserStockDataController {
     public String getPastWeekData(@PathVariable("symbol") String symbol){
          String result = "";
        // String stockBySymbol = stocksService.getStockBySymbol(symbol);
-        String stockBySymbol = "";
-           System.out.println("json result"+stockBySymbol);
 
-        if(stockBySymbol=="") {
-            System.out.println("In if loop");
+              logger.info("Caching the data ");
+
+           // System.out.println("In if loop");
             final String uri = "http://localhost:9093/pastWeek/" + symbol;
             RestTemplate restTemplate = new RestTemplate();
             result = restTemplate.getForObject(uri, String.class);
 
          //   stocksService.updateStock(result,symbol);
             return result;
-        }
-        else
-            return stockBySymbol;
+
     }
 
     @GetMapping(value = "/currentWeek/{symbol}", produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
     public String getCurrentWeekData(@PathVariable("symbol") String symbol){
-       System.out.println("In controler "+symbol);
+       //System.out.println("In controler "+symbol);
         final String uri = "http://localhost:9093/currentWeek/"+symbol;
         RestTemplate restTemplate = new RestTemplate();
         String result = restTemplate.getForObject(uri, String.class);

@@ -45,7 +45,7 @@ public class UserDetailServiceImpl implements UserDetailsService {
     // TODO Auto-generated method stub
 
     Optional<UserRegistry> findByIdResult = registrationRepository.findById(username);
-    System.out.println("username " + username);
+    //System.out.println("username " + username);
 
     if (findByIdResult.isPresent()) {
       findByIdResult.get().setEmail(userRegistry.getEmail());
@@ -59,8 +59,8 @@ public class UserDetailServiceImpl implements UserDetailsService {
 
   public void createBankAccount(@Valid BankAccount bankAccount, String username) {
     // TODO Auto-generated method stub
-    System.out.println("account balance " + bankAccount.getBalance());
-    System.out.println("username isssss bankaccount " + username);
+    //System.out.println("account balance " + bankAccount.getBalance());
+    //System.out.println("username isssss bankaccount " + username);
     bankAccount.setUser_name(username);
     bankAccountRepository.save(bankAccount);
   }
@@ -89,9 +89,9 @@ public class UserDetailServiceImpl implements UserDetailsService {
            Optional<BankAccount> findFromAccountById = bankAccountRepository.findById(transferInfo.getFromAccountNumber());
            double fromAcccountBalance = findFromAccountById.get().getBalance();
 
-           System.out.println("transerInfo "+transferInfo.getFromAccountNumber());
-           System.out.println("transfer info to " + transferInfo.getToAccounNumber());
-           System.out.println("balance "+ transferInfo.getAmountToTransfer());
+          // System.out.println("transerInfo "+transferInfo.getFromAccountNumber());
+           //System.out.println("transfer info to " + transferInfo.getToAccounNumber());
+           //System.out.println("balance "+ transferInfo.getAmountToTransfer());
            //System.out.println(accountBalance"");
            if(fromAcccountBalance<transferInfo.getAmountToTransfer()) throw new InsufficientFundsException("Insufficent funds");
            double balance = findByIdResult.get().getBalance();
@@ -108,9 +108,9 @@ public class UserDetailServiceImpl implements UserDetailsService {
     @Transactional
     public void stockBuy(BuyStock buyStock) throws InsufficientFundsException, InvalidAccountNumberException {
         Optional<BankAccount> findByAccountNumber = bankAccountRepository.findById(buyStock.getAccountNumber());
-        System.out.println("Account Number is "+ buyStock.getAccountNumber());
+        //System.out.println("Account Number is "+ buyStock.getAccountNumber());
      //   System.out.println("Username is "+ findByAccountNumber.get().getUser_name());
-        System.out.println(("Second Username is "+buyStock.getUsername()));
+        //System.out.println(("Second Username is "+buyStock.getUsername()));
 
        // if(findByAccountNumber.get().getUser_name()!=buyStock.getUsername())
          //     throw new InvalidAccountNumberException("Account Number does not exist");
@@ -132,7 +132,7 @@ public class UserDetailServiceImpl implements UserDetailsService {
                String symbol = findUserShareBySymbol.get(i).getSymbol();
 
 
-               System.out.println("symbol is "+symbol);
+              // System.out.println("symbol is "+symbol);
                if (buyStock.getSymbol().equals(symbol)) {
                    Long u = findUserShareBySymbol.get(i).getId();
                    int quantity = findUserShareBySymbol.get(i).getQuantity();
@@ -140,7 +140,7 @@ public class UserDetailServiceImpl implements UserDetailsService {
                 //   System.out.println("updated quantity is "+updatedQuantity);
                    findUserShareBySymbol.get(i).setQuantity(updatedQuantity);
                    userShareRepository.save(findUserShareBySymbol.get(i));
-                   System.out.println("flag true");
+                 //  System.out.println("flag true");
                    flag=true;
                    break;
                }
@@ -155,42 +155,17 @@ public class UserDetailServiceImpl implements UserDetailsService {
            userShare.setCompany(buyStock.getCompany_name());
            // findUserShareBySymbol.add(userShare);
 
-           System.out.println("before saving flag false");
+        //   System.out.println("before saving flag false");
            userShareRepository.save(userShare);
 
        }
-//       else{
-//           userShare.setSymbol(buyStock.getSymbol());
-//           userShare.setUsername(buyStock.getUsername());
-//           userShare.setQuantity(buyStock.getNumberOfUnits());
-//           userShare.setCompany(buyStock.getCompany_name());
-//          // findUserShareBySymbol.add(userShare);
-//           System.out.println("before saving");
-//           userShareRepository.save(userShare);
-//
-//       }
-//       if(findUserShareBySymbol != null)
-//       {
-//                      int quantity=findUserShareBySymbol.getQuantity();
-//                      int updatedQuantity= quantity+buyStock.getNumberOfUnits();
-//                      findUserShareBySymbol.setQuantity(updatedQuantity);
-//                      userShareRepository.save(findUserShareBySymbol);
-//       }
-//       else{
-//                     userShare.setSymbol(buyStock.getSymbol());
-//                     userShare.setUsername(buyStock.getUsername());
-//                     userShare.setQuantity(buyStock.getNumberOfUnits());
-//                     userShare.setCompany(buyStock.getCompany_name());
-//                     System.out.println("before saving");
-//                     userShareRepository.save(userShare);
-//           }
     }
 
     public void stockSell(BuyStock buyStock) throws InsufficientStocksException, NoSuchStockException {
         Optional<BankAccount> findByAccountNumber = bankAccountRepository.findById(buyStock.getAccountNumber());
          //      findByAccountNumber.get().getAccountnumber();
-        System.out.println("account number "+buyStock.getAccountNumber());
-        System.out.println("");
+       // System.out.println("account number "+buyStock.getAccountNumber());
+       // System.out.println("");
         double updatedBalance=accountBalanceUpdate(buyStock,findByAccountNumber,"sell");
         findByAccountNumber.get().setBalance(updatedBalance);
         bankAccountRepository.save(findByAccountNumber.get());
@@ -198,7 +173,7 @@ public class UserDetailServiceImpl implements UserDetailsService {
         boolean flag= false;
       for(int i=0;i<findUserShareBySymbol.size();i++)
       {
-          System.out.println("in sell flag before");
+         // System.out.println("in sell flag before");
           flag=true;
             String symbol = findUserShareBySymbol.get(i).getSymbol();
             if(buyStock.getSymbol().equals(symbol) ){
@@ -213,7 +188,7 @@ public class UserDetailServiceImpl implements UserDetailsService {
               break;
           }
           int updatedQuantity = quantity - buyStock.getNumberOfUnits();
-          System.out.println("updated quantity "+updatedQuantity);
+        //  System.out.println("updated quantity "+updatedQuantity);
           findUserShareBySymbol.get(i).setQuantity(updatedQuantity);
           userShareRepository.save(findUserShareBySymbol.get(i));
 
@@ -242,7 +217,7 @@ public class UserDetailServiceImpl implements UserDetailsService {
            updateBalance=currentAccountBalance-totalPrice;
         else if(func.equals("sell"))
             updateBalance=currentAccountBalance+totalPrice;
-        System.out.println("updated Balance"+updateBalance);
+      //  System.out.println("updated Balance"+updateBalance);
 
         return updateBalance;
     }
@@ -290,7 +265,7 @@ public class UserDetailServiceImpl implements UserDetailsService {
         StocksList stocksList=new StocksList();
         List<StocksList> list=new ArrayList<StocksList>();
         ObjectMapper objectMapper = new ObjectMapper();
-      System.out.println("in list Stocks ");
+     // System.out.println("in list Stocks ");
         //Gson gson = new Gson();
          List<JsonNode> jsonList=new ArrayList<JsonNode>();
          for(StocksList stocks: allStocks){
@@ -326,7 +301,7 @@ public class UserDetailServiceImpl implements UserDetailsService {
         UserShare userShare=new UserShare();
         List<UserShare> list=new ArrayList<UserShare>();
         ObjectMapper objectMapper = new ObjectMapper();
-        System.out.println("in list Stocks ");
+       // System.out.println("in list Stocks ");
         //Gson gson = new Gson();
         List<JsonNode> jsonList=new ArrayList<JsonNode>();
 
@@ -365,7 +340,7 @@ public class UserDetailServiceImpl implements UserDetailsService {
             con.setRequestProperty("Accept", "application/json");
             con.setDoOutput(true);
             int code = con.getResponseCode();
-            System.out.println(code);
+          //  System.out.println(code);
             BufferedReader in = new BufferedReader(
                     new InputStreamReader(con.getInputStream()));
             String inputLine;

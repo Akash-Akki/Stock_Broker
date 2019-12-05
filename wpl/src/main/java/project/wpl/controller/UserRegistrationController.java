@@ -30,6 +30,7 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import project.wpl.exception.*;
 //import project.wpl.kafka.Sender;
+import project.wpl.kafka.Sender;
 import project.wpl.model.BankAccount;
 import project.wpl.model.BuyStock;
 import project.wpl.model.TransferInfo;
@@ -64,8 +65,8 @@ public class UserRegistrationController {
 
   Cookie cookie;
 
-//  @Autowired
-//  Sender kafkaProducer;
+ @Autowired
+ Sender kafkaProducer;
 
 
   Logger logger = LoggerFactory.getLogger(UserRegistrationController.class);
@@ -75,7 +76,7 @@ public class UserRegistrationController {
   public ResponseEntity createDataSet(@Valid @RequestBody UserRegistry userRegistry,
                                       @RequestParam Map<String, String> params, BindingResult bindingResult) throws Exception {
     try {
-      System.out.println("Creating user");
+      //System.out.println("Creating user");
       logger.info("Creating new user"+userRegistry.getUsername());
        userValidator.validate(userRegistry,bindingResult);
        if(bindingResult.hasErrors())
@@ -130,9 +131,9 @@ public class UserRegistrationController {
       throw new SessionNotFoundException("User Not logged in");
     }
     String username= cookie.getValue();
-    System.out.println("usernaem is "+username);
-    System.out.println("in add account");
-    System.out.println(username);
+//    System.out.println("usernaem is "+username);
+//    System.out.println("in add account");
+//    System.out.println(username);
     try {
 
       if (username == null) {
@@ -154,9 +155,9 @@ public class UserRegistrationController {
   {
      try {
        userDetailService.transferMoney(transferInfo);
-       System.out.println("transerInfo ---- "+transferInfo.getFromAccountNumber());
-       System.out.println("transfer info to " + transferInfo.getToAccounNumber());
-       System.out.println("balance "+ transferInfo.getAmountToTransfer());
+//       System.out.println("transerInfo ---- "+transferInfo.getFromAccountNumber());
+//       System.out.println("transfer info to " + transferInfo.getToAccounNumber());
+//       System.out.println("balance "+ transferInfo.getAmountToTransfer());
      }
      catch(InsufficientFundsException e)
      {
@@ -168,18 +169,24 @@ public class UserRegistrationController {
 
   @PostMapping(value="/buy",consumes = MediaType.APPLICATION_JSON_VALUE,
           produces = MediaType.APPLICATION_JSON_VALUE)
-  public ResponseEntity buyStock(@Valid @RequestBody BuyStock buyStock,@RequestParam Map<String,String> params,HttpSession session) throws InvalidAccountNumberException {
+  public ResponseEntity buyStock(@Valid @RequestBody BuyStock buyStock,@RequestParam Map<String,String> params,HttpSession session) throws InvalidAccountNumberException, InterruptedException {
     //String username = (String) session.getAttribute("username");
     if(cookie == null){
       throw new SessionNotFoundException("User Not logged in");
     }
     String username = cookie.getValue();
-    System.out.println("username in controller is " + username);
+   // System.out.println("username in controller is " + username);
+try {
+    buyStock.setUsername(username);
+    JsonElement json = new Gson().toJsonTree(buyStock);
+    kafkaProducer.sendBuy(json.toString());
 
-     buyStock.setUsername(username);
-     JsonElement json = new Gson().toJsonTree(buyStock);
-     //kafkaProducer.sendBuy(json.toString());
-     userDetailService.stockBuy(buyStock);
+}
+catch (InsufficientStocksException e)
+{
+    return  new ResponseEntity(e.getMessage(), HttpStatus.FORBIDDEN);
+}
+     //userDetailService.stockBuy(buyStock);
      return new ResponseEntity("stock bought succesfully",HttpStatus.ACCEPTED);
   }
 
@@ -195,15 +202,16 @@ public class UserRegistrationController {
     String username = cookie.getValue();
     buyStock.setUsername(username);
     try {
-      userDetailService.stockSell(buyStock);
+      //userDetailService.stockSell(buyStock);
+        JsonElement json = new Gson().toJsonTree(buyStock);
+        kafkaProducer.sendSell(json.toString());
+
+
     }
     catch(InsufficientStocksException e){
       return new ResponseEntity(e.getMessage(),HttpStatus.FORBIDDEN);
     }
-    catch(NoSuchStockException e){
-      return new ResponseEntity(e.getMessage(),HttpStatus.FORBIDDEN);
-    }
-    return new ResponseEntity("stock sold succesfully",HttpStatus.ACCEPTED);
+      return new ResponseEntity("stock sold succesfully",HttpStatus.ACCEPTED);
   }
 
 
@@ -215,7 +223,7 @@ public class UserRegistrationController {
     try {
        jsonString = userDetailService.listStocks();
 
-       System.out.println( " in list stocks ");
+      // System.out.println( " in list stocks ");
 //       for(int i=0;i<jsonString.size();i++)
 //          System.out.println("json String is "+ jsonString.get(i));
     }
@@ -223,7 +231,7 @@ public class UserRegistrationController {
     {
          return  new ResponseEntity(e.getMessage(),HttpStatus.FORBIDDEN);
     }
-    System.out.println("list stock");
+   // System.out.println("list stock");
     return new ResponseEntity<List<JsonNode>>(jsonString,HttpStatus.ACCEPTED);
   }
 
@@ -236,7 +244,7 @@ public class UserRegistrationController {
 
        jsonString = userDetailService.getUserInfo(username);
 
-      System.out.println( " in list stocks ");
+      //System.out.println( " in list stocks ");
 //       for(int i=0;i<jsonString.size();i++)
 //          System.out.println("json String is "+ jsonString.get(i));
 
@@ -253,7 +261,7 @@ public class UserRegistrationController {
 
     try {
       jsonString = userDetailService.listMyStocks(username);
-      System.out.println( " in list stocks ");
+     // System.out.println( " in list stocks ");
 //       for(int i=0;i<jsonString.size();i++)
 //          System.out.println("json String is "+ jsonString.get(i));
     }
@@ -261,7 +269,7 @@ public class UserRegistrationController {
     {
       return  new ResponseEntity(e.getMessage(),HttpStatus.FORBIDDEN);
     }
-    System.out.println("list stock");
+  //  System.out.println("list stock");
     return new ResponseEntity<List<JsonNode>>(jsonString,HttpStatus.ACCEPTED);
   }
 
@@ -277,7 +285,7 @@ public class UserRegistrationController {
       throw new SessionNotFoundException("User Not logged in");
     }
     String username= cookie.getValue();
-    System.out.println("in user profile info");
+   // System.out.println("in user profile info");
     List<JsonNode> jsonNodeList =new ArrayList<JsonNode>();
     try {
       if (username == null) {
@@ -297,7 +305,7 @@ public class UserRegistrationController {
       produces = MediaType.APPLICATION_JSON_VALUE)
   public ResponseEntity forgotPassword(@Valid @RequestBody UserRegistry userRegistry,
       @RequestParam Map<String, String> params) throws Exception {
-    System.out.println("in forgot Password");
+    //System.out.println("in forgot Password");
     JSONObject entities = userRegistryServiceImpl.validateSecurityQuestion(userRegistry);
     return new ResponseEntity<Object>(entities, HttpStatus.OK);
   }
@@ -316,14 +324,14 @@ public class UserRegistrationController {
   @PostMapping("/login")
   public ResponseEntity login(@Valid @RequestBody UserRegistry userRegistry, HttpServletRequest request,
                               Principal principal) {
-    System.out.println("logging in");
+   // System.out.println("logging in");
     // System.out.println("principal user " + principal.getName());
     UserDetails userDetails = userDetailsService.loadUserByUsername(userRegistry.getUsername());
 
     UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken =
         new UsernamePasswordAuthenticationToken(userDetails, userRegistry.getPasswd(),
             userDetails.getAuthorities());
-    System.out.println("Auth test");
+   // System.out.println("Auth test");
     authenticationManager.authenticate(usernamePasswordAuthenticationToken);
     if (usernamePasswordAuthenticationToken.isAuthenticated()) {
       // create session
@@ -331,9 +339,9 @@ public class UserRegistrationController {
       session.setAttribute("username", userRegistry.getUsername());
       cookie = new Cookie("username",userRegistry.getUsername());
       cookie.getValue();
-      System.out.println("cookie value "+cookie.getValue());
+     // System.out.println("cookie value "+cookie.getValue());
       SecurityContextHolder.getContext().setAuthentication(usernamePasswordAuthenticationToken);
-      System.out.println(String.format("Auto login %s successfully!", userRegistry.getUsername()));
+      //System.out.println(String.format("Auto login %s successfully!", userRegistry.getUsername()));
     } else
       return new ResponseEntity("username or password invalid",HttpStatus.FORBIDDEN);
     return new ResponseEntity(cookie.getValue(),HttpStatus.ACCEPTED);
@@ -347,7 +355,7 @@ public class UserRegistrationController {
     // Authentication auth = SecurityContextHolder.getContext().getAuthentication();
     HttpSession session = request.getSession(false);
     SecurityContextHolder.clearContext();
-    System.out.println("in logged out");
+    //System.out.println("in logged out");
     session = request.getSession();
     cookie.setMaxAge(0);
     if (session != null) {
