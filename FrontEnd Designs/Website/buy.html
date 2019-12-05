@@ -113,8 +113,12 @@
 					var numberOfUnits = prompt("Enter stock quantity to buy");
 					if(numberOfUnits != null){
 					var p = o.parentNode.parentNode;
-					var symbol = p.childNodes[1].innerHTML;
-					var company_name = symbol;
+					var symbol = p.childNodes[0].innerHTML;
+                        var company_name =  p.childNodes[1].innerHTML;
+                    console.log("symbol is "+symbol);
+                    console.log("company name is "+company_name);
+                    
+				//	var company_name = symbol;
 					var accountNumber = prompt("Enter your bank Account number");
 					if(accountNumber != null){
 					var buydetails = {symbol, company_name, numberOfUnits, accountNumber};
@@ -124,7 +128,7 @@
 					xhttp.onreadystatechange = function() {
 						 if (this.readyState == 4 && this.status == 202) {
 							 alert(this.responseText);
-                             console.log("in response success");
+                            // console.log("in response success");
                             window.location.replace("my_profile.html");
                              //location.reload(true);
 							}

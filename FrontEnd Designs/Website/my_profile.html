@@ -164,6 +164,9 @@
 					if(numberOfUnits != null){
 					var p = o.parentNode.parentNode;
 					var symbol = p.childNodes[1].innerHTML;
+                        var company_name = p.childNodes[0].innerHTML;
+                        console.log("symbol is "+symbol);
+                        console.log("company_name "+company_name);
 					var company_name = symbol;
 					var accountNumber = prompt("Enter the Bank Account number");
 					if(accountNumber != null){
@@ -224,6 +227,12 @@
                          
  }
             
+        function refresh(){
+            
+            location.reload();
+            
+        }
+        
         
 </script>
 </head>
@@ -310,6 +319,7 @@
         <button class="btn btn-outline-success"><a href="try.html">Add Bank Information</a></button>
         <button class="btn btn-outline-primary"><a href="bank_Transfer.html">Bank Transfer</a></button>
         <button class="btn btn-outline-primary"><a href="buy.html">Buy</a></button>
+        <button class="btn btn-outline-primary" id ="mybutton"><a href="#" onclick="refresh();">Refresh My Profile</a></button>
     <br><br>
     <!--button onclick = "constructTable('#tablestk');"> View Stock Information</button>
     <br><br>

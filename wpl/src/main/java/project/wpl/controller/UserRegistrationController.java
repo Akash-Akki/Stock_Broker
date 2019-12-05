@@ -305,6 +305,7 @@ catch (InsufficientStocksException e)
       @RequestParam Map<String, String> params) throws Exception {
     //System.out.println("in forgot Password");
     JSONObject entities = userRegistryServiceImpl.validateSecurityQuestion(userRegistry);
+
     return new ResponseEntity<Object>(entities, HttpStatus.OK);
   }
 

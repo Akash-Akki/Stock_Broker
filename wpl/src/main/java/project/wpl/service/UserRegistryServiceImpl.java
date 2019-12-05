@@ -90,10 +90,12 @@ public class UserRegistryServiceImpl {
       Optional<UserRegistry> findByIdResult =
           registrationRepository.findById(userRegistry.getUsername());
       if (findByIdResult.isPresent()) {
-        findByIdResult.get()
+        findByIdResult.get().setPasswd(bCryptPasswordEncoder.encode(userRegistry.getPasswd()));
+        findByIdResult.get().setPasswordConfirm(bCryptPasswordEncoder.encode(userRegistry.getPasswd()));
+        /*findByIdResult.get()
             .setPasswd(Base64.getEncoder().encodeToString(userRegistry.getPasswd().getBytes()));
         findByIdResult.get().setPasswordConfirm(
-            Base64.getEncoder().encodeToString(userRegistry.getPasswd().getBytes()));
+            Base64.getEncoder().encodeToString(userRegistry.getPasswd().getBytes()));*/
         registrationRepository.save(findByIdResult.get());
       } else {
         throw new ResourceNotFoundException("Username not found");
