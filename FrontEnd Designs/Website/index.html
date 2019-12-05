@@ -78,6 +78,8 @@ $(document).ready(function(){
              alert("User registration successful");
               window.location.href='login.html';
          }
+         else
+         alert("User registration Failed");
     };
     xhttp.open("POST", "https://localhost:9090/userRegistration", true);
     xhttp.setRequestHeader("Content-type", "application/json");
