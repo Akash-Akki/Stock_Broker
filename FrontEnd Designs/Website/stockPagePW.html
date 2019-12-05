@@ -67,11 +67,32 @@
     <script>
             function checkValue()
             {
-                  $("#table tr").click(function(){
-                  $(this).addClass('selected').siblings().removeClass('selected');
-                  var value=$(this).find('td:first').html();
-                  alert(value);
-                  });
+                    var table = document.getElementById("stktab");
+                    var cells = table.getElementsByTagName('td');
+
+                    for (var i = 0; i < cells.length; i++) {
+                        // Take each cell
+                        var cell = cells[i];
+                        // do something on onclick event for cell
+                        cell.onclick = function () {
+                            // Get the row id where the cell exists
+                            var rowId = this.parentNode.rowIndex;
+
+                            var rowsNotSelected = table.getElementsByTagName('tr');
+                            for (var row = 0; row < rowsNotSelected.length; row++) {
+                                rowsNotSelected[row].style.backgroundColor = "";
+                                rowsNotSelected[row].classList.remove('selected');
+                            }
+                            var rowSelected = table.getElementsByTagName('tr')[rowId];
+                            rowSelected.style.backgroundColor = "yellow";
+                            rowSelected.className += " selected";
+
+                            msg = 'The ID of the company is: ' + rowSelected.cells[0].innerHTML;
+                            msg += '\nThe cell value is: ' + this.innerHTML;
+                            alert(msg);
+                        }
+                    }
+
 
                 var e = document.getElementById("month");
                 var  monthselected = e.options[e.selectedIndex].value;
@@ -182,7 +203,7 @@
 <button id="checkVal" value="OK" onclick="checkValue()">Submit
     </button>
 <table align = "center"
-       id="table" border="1" >
+       id="stktab" border="1">
 </table>
 
 <br><br>
