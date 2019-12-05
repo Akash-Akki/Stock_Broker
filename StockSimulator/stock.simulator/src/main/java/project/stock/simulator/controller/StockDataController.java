@@ -8,6 +8,7 @@ import com.google.gson.stream.JsonReader;
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeConstants;
 import org.joda.time.LocalDate;
+import org.joda.time.LocalDateTime;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 import project.stock.simulator.model.SingleStock;
@@ -27,6 +28,7 @@ public class StockDataController {
     @GetMapping(value = "/pastWeek/{symbol}", produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
     public String getPastWeekData(@PathVariable("symbol")  String symbol)  {
+        System.out.println("Url hit");
         int count = 1;
         Stocks stocks = new Stocks();
         List<SingleStock> list = new ArrayList<SingleStock>();
@@ -325,6 +327,9 @@ public double currentValue(@PathVariable("symbol") String symbol){
                 today = today.minusDays(1);
             else if(today.getDayOfWeek() == 7)
                 today = today.minusDays(2);
+            int hrs = LocalDateTime.now().getHourOfDay();
+            if(hrs<9)
+                today = today.minusDays(1);
 
             stockValue = jsonObject.get("Time Series (Daily)").getAsJsonObject().get(today.toString()).getAsJsonObject().get("4. close").getAsDouble();
             //json = jsonObject.toString();
@@ -332,7 +337,8 @@ public double currentValue(@PathVariable("symbol") String symbol){
 
         }
  return stockValue;
-}
+
+    }
 
   /*  public static void main(String[] arg){
 
