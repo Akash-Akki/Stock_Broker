@@ -80,7 +80,7 @@ $(document).ready(function(){
              console.log(this.responseText);
 			 window.location.href='login.html';
          }
-         else
+         else if (this.readyState == 4 && this.status != 200)
          alert("Reset Failed");
     };
     xhttp.open("PUT", "https://localhost:9090/resetPassword", true);
@@ -115,7 +115,7 @@ $(document).ready(function(){
                 </div>
 
                 <div class="signin-form">
-                    <h2 class="form-title">Forgot Password</h2>
+                    <h2 class="form-title">Reset Password</h2>
 						<form method="POST" class="reset-form" id="resetform">
 						<div class="form-group">
                             <label for="your_name"><i class="zmdi zmdi-account material-icons-name"></i></label>

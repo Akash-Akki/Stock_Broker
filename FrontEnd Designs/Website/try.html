@@ -76,11 +76,16 @@
 
 		var xhttp = new XMLHttpRequest();
 		xhttp.onreadystatechange = function() {
-			 if (this.readyState == 4 && this.status == 200) {
+			 if (this.readyState == 4 && this.status == 202) {
+			    console.log("added");
+			    window.location.href="my_profile.html";
 				 alert("Added Bank Account Information Successfully");
+
 			 }
-			 else
+			 else if(this.readyState == 4 && this.status!=202){
+              console.log("error");
 			 alert("Failed adding bank information. Please try again");
+			}
 		};
 		xhttp.open("POST", "https://localhost:9090/addBankAccount", true);
 		xhttp.setRequestHeader("Content-type", "application/json");

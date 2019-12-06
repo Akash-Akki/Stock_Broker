@@ -152,7 +152,7 @@ public class UserRegistrationController {
                                       @RequestParam Map<String ,String> params,HttpSession session)
   {
      try {
-       userDetailService.transferMoney(transferInfo);
+         userDetailService.transferMoney(transferInfo);
 //       System.out.println("transerInfo ---- "+transferInfo.getFromAccountNumber());
 //       System.out.println("transfer info to " + transferInfo.getToAccounNumber());
 //       System.out.println("balance "+ transferInfo.getAmountToTransfer());
@@ -305,8 +305,10 @@ catch (InsufficientStocksException e)
       @RequestParam Map<String, String> params) throws Exception {
     //System.out.println("in forgot Password");
     JSONObject entities = userRegistryServiceImpl.validateSecurityQuestion(userRegistry);
-
-    return new ResponseEntity<Object>(entities, HttpStatus.OK);
+    if(entities.get("status").equals("success"))
+      return new ResponseEntity<Object>("success", HttpStatus.OK);
+    else
+      return new ResponseEntity("invalid answer",HttpStatus.FORBIDDEN);
   }
 
   @PutMapping(value = "/resetPassword", consumes = MediaType.APPLICATION_JSON_VALUE,

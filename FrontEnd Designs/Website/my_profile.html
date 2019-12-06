@@ -91,7 +91,7 @@
            list = JSON.parse(this.responseText);
            //JSON.stringify("list is "+list);
            console.log("list length "+list.length);
-          console.log("obj is "+list[0].symbol);
+          //console.log("obj is "+list[0].symbol);
              
         
                          var cols = Headers(list, selector);
@@ -176,12 +176,11 @@
 					var xhttp = new XMLHttpRequest();
 					xhttp.onreadystatechange = function() {
 						 if (this.readyState == 4 && this.status == 202) {
-							 alert(this.responseText);
+							 alert("Request added to queue");
                              console.log("in response success");
-                             location.reload(true);
 							}
 						};
-					xhttp.open("POST", "https://localhost:9090/sell", true);
+		   			xhttp.open("POST", "https://localhost:9090/sell", true);
 					xhttp.setRequestHeader("Content-type", "application/json");
 					xhttp.send(myJSON);
                          

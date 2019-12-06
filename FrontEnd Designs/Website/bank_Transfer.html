@@ -74,11 +74,14 @@ $(document).ready(function(){
 
     var xhttp = new XMLHttpRequest();
     xhttp.onreadystatechange = function() {
-         if (this.readyState == 4 && this.status == 200) {
+         if (this.readyState == 4 && this.status == 202) {
              alert("Money transferred successfully");
+             window.location.href = 'my_profile.html';
          }
-         else
-         alert("Money Transfer Failed");
+         else if(this.readyState == 4 && this.status!=202){
+
+           alert("Money Transfer Failed");
+         }
     };
     xhttp.open("POST", "https://localhost:9090/transferMoney", true);
     xhttp.setRequestHeader("Content-type", "application/json");

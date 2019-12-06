@@ -174,11 +174,13 @@ public class UserDetailServiceImpl implements UserDetailsService {
         bankAccountRepository.save(findByAccountNumber.get());
         List<UserShare> findUserShareBySymbol = userShareRepository.findByUsername(buyStock.getUsername());
         boolean flag= false;
+        String symbol = findUserShareBySymbol.get(0).getSymbol();
       for(int i=0;i<findUserShareBySymbol.size();i++)
       {
          // System.out.println("in sell flag before");
           flag=true;
-            String symbol = findUserShareBySymbol.get(i).getSymbol();
+             symbol = findUserShareBySymbol.get(i).getSymbol();
+          //  System.out.println("symbol is "+symbol);
             if(buyStock.getSymbol().equals(symbol) ){
 
           int quantity = findUserShareBySymbol.get(i).getQuantity();
@@ -343,7 +345,7 @@ public class UserDetailServiceImpl implements UserDetailsService {
              stockValue = restTemplate.getForObject(uri, Double.class);
 
 
-        System.out.println("stock value "+stockValue);
+        //System.out.println("stock value "+stockValue);
         return stockValue;
     }
 

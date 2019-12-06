@@ -31,7 +31,7 @@
 		  display: inline;
 		  overflow: hidden;
 		  background-color: none;
-		  position: fixed;
+		  
 		  top: 0px;
 		  width: 100%;
 		  right: 150px;
@@ -81,7 +81,8 @@
          console.log("login succesfully");
            //$(location).attr('href', 'my_profile.html')
             window.location.href='my_profile.html';
-         } else{
+         } else if(this.readyState == 4 && this.status!=202){
+
          document.getElementById("err").innerHTML = "Username or Password Invalid";
          }
     };
@@ -93,6 +94,12 @@
 });
 
 
+  
+        
+    
+    
+    
+    
 </script>
 </head>
 <body>
